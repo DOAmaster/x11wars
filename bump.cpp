@@ -43,7 +43,7 @@ typedef Flt Vec[3];
 #define VecCopy2d(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];
 #define VecNegate2d(a) (a)[0]=(-(a)[0]); (a)[1]=(-(a)[1]);
 #define VecDot2d(a,b) ((a)[0]*(b)[0]+(a)[1]*(b)[1])
-static int xres=640, yres=480;
+static int xres=800, yres=600;
 void setup_screen_res(const int w, const int h);
 
 class X11_wrapper {
@@ -59,7 +59,7 @@ public:
 		XVisualInfo *vi;
 		Colormap cmap;
 		XSetWindowAttributes swa;
-		setup_screen_res(640, 480);
+		setup_screen_res(800, 600);
 		dpy = XOpenDisplay(NULL);
 		if (dpy == NULL) {
 			printf("\n\tcannot connect to X server\n\n");
@@ -210,8 +210,8 @@ public:
 	Vec force;
 	float radius;
 	float mass;
-} ball[2];
-const int n=2;
+} ball[15];
+const int n=15;
 
 //-----------------------------------------------------------------------------
 //Setup timers
@@ -288,7 +288,7 @@ void init_opengl(void)
 	//This sets 2D mode (no perspective)
 	glOrtho(0, xres, 0, yres, -1, 1);
 	//Clear the screen
-	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClearColor(0.6, 1.0, 0.6, 1.0);
 	//Do this to allow fonts
 	glEnable(GL_TEXTURE_2D);
 	initialize_fonts();
@@ -337,19 +337,119 @@ void scenario1(void)
 
 void scenario2(void)
 {
-	ball[0].pos[0] = 200;
-	ball[0].pos[1] = yres-150;
+	ball[0].pos[0] = xres/4-100;
+	ball[0].pos[1] = yres/2;
 	ball[0].vel[0] = 0.0;
 	ball[0].vel[1] = 0.0;
-	ball[0].radius = 70.0;
+	ball[0].radius = 25.0;
 	ball[0].mass = sphereVolume(ball[0].radius);
 	//
 	ball[1].pos[0] = 400;
-	ball[1].pos[1] = yres-150;
-	ball[1].vel[0] = 9.0;
+	ball[1].pos[1] = 200;
+	ball[1].vel[0] = 0.0;
 	ball[1].vel[1] = 0.0;
-	ball[1].radius = 70.0;
+	ball[1].radius = 25.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
+	//
+	ball[2].pos[0] = 400;
+	ball[2].pos[1] = 250;
+	ball[2].vel[0] = 0.0;
+	ball[2].vel[1] = 0.0;
+	ball[2].radius = 25.0;
+	ball[2].mass = sphereVolume(ball[2].radius);
+	//
+	ball[3].pos[0] = 400;
+	ball[3].pos[1] = 300;
+	ball[3].vel[0] = 0.0;
+	ball[3].vel[1] = 0.0;
+	ball[3].radius = 25.0;
+	ball[3].mass = sphereVolume(ball[3].radius);
+	//
+	ball[4].pos[0] = 400;
+	ball[4].pos[1] = 350;
+	ball[4].vel[0] = 0.0;
+	ball[4].vel[1] = 0.0;
+	ball[4].radius = 25.0;
+	ball[4].mass = sphereVolume(ball[4].radius);
+	//
+	ball[5].pos[0] = 400;
+	ball[5].pos[1] = 400;
+	ball[5].vel[0] = 0.0;
+	ball[5].vel[1] = 0.0;
+	ball[5].radius = 25.0;
+	ball[5].mass = sphereVolume(ball[5].radius);
+	//
+	ball[6].pos[0] = 400;
+	ball[6].pos[1] = 450;
+	ball[6].vel[0] = 0.0;
+	ball[6].vel[1] = 0.0;
+	ball[6].radius = 25.0;
+	ball[6].mass = sphereVolume(ball[6].radius);
+	//
+	ball[7].pos[0] = 400;
+	ball[7].pos[1] = 500;
+	ball[7].vel[0] = 0.0;
+	ball[7].vel[1] = 0.0;
+	ball[7].radius = 25.0;
+	ball[7].mass = sphereVolume(ball[7].radius);
+	//
+	ball[8].pos[0] = 400;
+	ball[8].pos[1] = 550;
+	ball[8].vel[0] = 0.0;
+	ball[8].vel[1] = 0.0;
+	ball[8].radius = 25.0;
+	ball[8].mass = sphereVolume(ball[8].radius);
+	//
+	ball[9].pos[0] = 400;
+	ball[9].pos[1] = 600;
+	ball[9].vel[0] = 0.0;
+	ball[9].vel[1] = 0.0;
+	ball[9].radius = 25.0;
+	ball[9].mass = sphereVolume(ball[9].radius);
+	//
+	ball[10].pos[0] = 400;
+	ball[10].pos[1] = 650;
+	ball[10].vel[0] = 0.0;
+	ball[10].vel[1] = 0.0;
+	ball[10].radius = 25.0;
+	ball[10].mass = sphereVolume(ball[10].radius);
+	//
+	ball[11].pos[0] = 400;
+	ball[11].pos[1] = 700;
+	ball[11].vel[0] = 0.0;
+	ball[11].vel[1] = 0.0;
+	ball[11].radius = 25.0;
+	ball[11].mass = sphereVolume(ball[11].radius);
+	//
+	ball[12].pos[0] = 400;
+	ball[12].pos[1] = 750;
+	ball[12].vel[0] = 0.0;
+	ball[12].vel[1] = 0.0;
+	ball[12].radius = 25.0;
+	ball[12].mass = sphereVolume(ball[12].radius);
+	//
+	ball[13].pos[0] = 400;
+	ball[13].pos[1] = 150;
+	ball[13].vel[0] = 0.0;
+	ball[13].vel[1] = 0.0;
+	ball[13].radius = 25.0;
+	ball[13].mass = sphereVolume(ball[13].radius);
+	//
+	ball[14].pos[0] = 400;
+	ball[14].pos[1] = 100;
+	ball[14].vel[0] = 0.0;
+	ball[14].vel[1] = 0.0;
+	ball[14].radius = 25.0;
+	ball[14].mass = sphereVolume(ball[14].radius);
+	/*
+	ball[15].pos[0] = 400;
+	ball[15].pos[1] = 50;
+	ball[15].vel[0] = 0.0;
+	ball[15].vel[1] = 0.0;
+	ball[15].radius = 25.0;
+	ball[15].mass = sphereVolume(ball[15].radius);
+	*/
+	
 }
 
 void check_resize(XEvent *e)
@@ -535,6 +635,7 @@ void physics(void)
 		ball[i].pos[1] += ball[i].vel[1];
 	}
 	//check for collision here
+	//add printf statments to help debug
 	Flt distance, speed;
 	Flt movi[2], movj[2];
 	Flt massFactor, massi, massj;
@@ -640,17 +741,98 @@ void render(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 	//
 	//draw balls
-	glColor3ub(30,60,90);
+	glColor3ub(255,255,255);
 	glPushMatrix();
 	glTranslatef(ball[0].pos[0], ball[0].pos[1], ball[0].pos[2]);
 	drawBall(ball[0].radius);
 	glPopMatrix();
-
+	//
 	glColor3ub(130,60,90);
 	glPushMatrix();
 	glTranslatef(ball[1].pos[0], ball[1].pos[1], ball[1].pos[2]);
 	drawBall(ball[1].radius);
 	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[3].pos[0], ball[3].pos[1], ball[3].pos[2]);
+	drawBall(ball[3].radius);
+	glPopMatrix();
+	//
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[4].pos[0], ball[4].pos[1], ball[4].pos[2]);
+	drawBall(ball[4].radius);
+	glPopMatrix();
+	//
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[5].pos[0], ball[5].pos[1], ball[5].pos[2]);
+	drawBall(ball[5].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[6].pos[0], ball[6].pos[1], ball[6].pos[2]);
+	drawBall(ball[6].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[7].pos[0], ball[7].pos[1], ball[7].pos[2]);
+	drawBall(ball[7].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[8].pos[0], ball[8].pos[1], ball[8].pos[2]);
+	drawBall(ball[8].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[9].pos[0], ball[9].pos[1], ball[9].pos[2]);
+	drawBall(ball[9].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[10].pos[0], ball[10].pos[1], ball[10].pos[2]);
+	drawBall(ball[10].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[11].pos[0], ball[11].pos[1], ball[11].pos[2]);
+	drawBall(ball[11].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[12].pos[0], ball[12].pos[1], ball[12].pos[2]);
+	drawBall(ball[12].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[13].pos[0], ball[13].pos[1], ball[13].pos[2]);
+	drawBall(ball[13].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[14].pos[0], ball[14].pos[1], ball[14].pos[2]);
+	drawBall(ball[14].radius);
+	glPopMatrix();
+	//
+	glColor3ub(130,60,90);
+	glPushMatrix();
+	glTranslatef(ball[15].pos[0], ball[15].pos[1], ball[15].pos[2]);
+	drawBall(ball[15].radius);
+	glPopMatrix();
+	//
 	//
 	r.bot = yres - 20;
 	r.left = 10;
@@ -668,7 +850,7 @@ void render(void)
 	r.center = 1;
 	r.left = ball[0].pos[0];
 	r.bot  = ball[0].pos[1]-4;
-	ggprint8b(&r, 16, 0x00ffff00, "paddle");
+	ggprint8b(&r, 16, 0x00000000, "Cue");
 	r.left = ball[1].pos[0];
 	r.bot  = ball[1].pos[1]-4;
 	ggprint8b(&r, 16, 0x00ffff00, "puck");
