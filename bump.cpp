@@ -1,7 +1,7 @@
 //cs335 Sample
 //This program demonstrates billiard ball collisions
 //Originally designed to be used with air hockey collisions
-//
+//Modified by: Derrick Alden
 //program: bump.cpp
 //author:  Gordon Griesel
 //date:    2014, 2017
@@ -334,6 +334,24 @@ void scenario1(void)
 	ball[1].mass = sphereVolume(ball[1].radius);
 }
 
+
+void scenario2(void)
+{
+	ball[0].pos[0] = 200;
+	ball[0].pos[1] = yres-150;
+	ball[0].vel[0] = 0.0;
+	ball[0].vel[1] = 0.0;
+	ball[0].radius = 70.0;
+	ball[0].mass = sphereVolume(ball[0].radius);
+	//
+	ball[1].pos[0] = 400;
+	ball[1].pos[1] = yres-150;
+	ball[1].vel[0] = 9.0;
+	ball[1].vel[1] = 0.0;
+	ball[1].radius = 70.0;
+	ball[1].mass = sphereVolume(ball[1].radius);
+}
+
 void check_resize(XEvent *e)
 {
 	//The ConfigureNotify is sent by the
@@ -389,6 +407,10 @@ void check_keys(XEvent *e)
 			case XK_a:
 				//scenario
 				scenario1();
+				break;
+			case XK_b:
+				//scenario
+				scenario2();
 				break;
 			case XK_1:
 				ball[0].radius -= 1.0;
@@ -637,6 +659,8 @@ void render(void)
 	ggprint8b(&r, 16, 0x0000000, "Arrows/mouse to move");
 	ggprint8b(&r, 16, 0x0000000, "S - Slow down movement");
 	ggprint8b(&r, 16, 0x0000000, "hold down 1, 2, 3, 4");
+	ggprint8b(&r, 16, 0x0000000, "A - scenario1");
+	ggprint8b(&r, 16, 0x0000000, "B - scenario2");
 	char ts[16];
 	sprintf(ts, "%i", lbumphigh);
 	ggprint8b(&r, 16, 0x00ff000, ts);
