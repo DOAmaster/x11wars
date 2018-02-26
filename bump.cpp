@@ -1,6 +1,3 @@
-//cs335 Sample
-//This program demonstrates billiard ball collisions
-//Originally designed to be used with air hockey collisions
 //Modified by: Derrick Alden
 //program: bump.cpp
 //author:  Gordon Griesel
@@ -100,7 +97,7 @@ public:
 	void set_title(void) {
 		//Set the window title bar.
 		XMapWindow(dpy, win);
-		XStoreName(dpy, win, "Billiard ball physics");
+		XStoreName(dpy, win, "x11 Wars");
 	}
 	bool getPending() {
 		return XPending(dpy);
@@ -213,6 +210,48 @@ public:
 } ball[15];
 const int n=15;
 
+
+class Player {
+public:
+	Vec pos;
+	Vec vel;
+	Vec force;
+	float radius;
+	float mass;
+};
+
+enum State {
+	STATE_NONE,
+	STATE_STARTUP,
+	STATE_GAMEPLAY,
+	STATE_PAUSE,
+	STATE_GAMEOVER
+
+};
+
+
+class Game {
+    public:
+	Player player;
+//	Shape box[6];
+//	Particle particle[MAX_PARTICLES];
+	int n;
+
+	State state;
+
+	bool spawner;
+
+	unsigned char keys[65535];
+
+	Game(){
+	    	state = STATE_STARTUP;
+		spawner = false;
+		n = 0;
+	}
+}game;
+
+
+
 //-----------------------------------------------------------------------------
 //Setup timers
 const double physicsRate = 1.0 / 60.0;
@@ -237,6 +276,11 @@ int main(void)
 	init_balls();
 	clock_gettime(CLOCK_REALTIME, &timePause);
 	clock_gettime(CLOCK_REALTIME, &timeStart);
+
+	//declar game object
+//	Game game;
+//	game.n=0;
+
 	while (!done) {
 		while (x11.getPending()) {
 			XEvent e;
@@ -413,6 +457,7 @@ void init_balls(void)
 
 void scenario1(void)
 {
+	game.state = STATE_GAMEPLAY;
 	ball[0].pos[0] = 200;
 	ball[0].pos[1] = yres-150;
 	ball[0].vel[0] = 0.0;
@@ -431,6 +476,8 @@ void scenario1(void)
 
 void scenario2(void)
 {
+
+	game.state = STATE_GAMEPLAY;
         //cue ball
 	ball[0].pos[0] = xres/4-100;
 	ball[0].pos[1] = yres/2;
@@ -643,6 +690,10 @@ void check_keys(XEvent *e)
 				ball[1].vel[1] *= 0.5;
 				break;
 			case XK_Escape:
+				game.state = STATE_STARTUP;
+				//done=1;
+				break;
+			case XK_p:
 				done=1;
 				break;
 		}
@@ -835,6 +886,7 @@ void render(void)
 	Rect r;
 	glClear(GL_COLOR_BUFFER_BIT);
 	//
+	if(game.state == STATE_GAMEPLAY) {
 	//draw balls
 	glColor3ub(255,255,255);
 	glPushMatrix();
@@ -929,26 +981,33 @@ void render(void)
 	glPopMatrix();
 	//
 	//
-	r.bot = yres - 20;
-	r.left = 10;
-	r.center = 0;
-	ggprint8b(&r, 16, 0x0000000, "cs335 - Collision Demo");
-	ggprint8b(&r, 16, 0x0000000, "Arrows/mouse to move");
-	ggprint8b(&r, 16, 0x0000000, "S - Slow down movement");
-	ggprint8b(&r, 16, 0x0000000, "hold down 1, 2, 3, 4");
-	ggprint8b(&r, 16, 0x0000000, "A - scenario1");
-	ggprint8b(&r, 16, 0x0000000, "B - scenario2");
-	char ts[16];
-	sprintf(ts, "%i", lbumphigh);
-	ggprint8b(&r, 16, 0x00ff000, ts);
+	}
+	if(game.state == STATE_STARTUP) {
+		r.bot = yres/2;
+		r.left = xres/2;
+		r.center = 0;
+		ggprint8b(&r, 16, 0x0000000, "x11 Wars");
+		ggprint8b(&r, 16, 0x0000000, "Arrows/mouse to move");
+		ggprint8b(&r, 16, 0x0000000, "S - Slow down movement");
+		ggprint8b(&r, 16, 0x0000000, "hold down 1, 2, 3, 4");
+		ggprint8b(&r, 16, 0x0000000, "A - scenario1");
+		ggprint8b(&r, 16, 0x0000000, "B - scenario2");
+		ggprint8b(&r, 16, 0x0000000, "ESC - Pause");
+		ggprint8b(&r, 16, 0x0000000, "P - Quit");
+	}
+//	char ts[16];
+//	sprintf(ts, "%i", lbumphigh);
+//	ggprint8b(&r, 16, 0x00ff000, ts);
 	//
-	r.center = 1;
-	r.left = ball[0].pos[0];
-	r.bot  = ball[0].pos[1]-4;
-	ggprint8b(&r, 16, 0x00000000, "Cue");
-	r.left = ball[1].pos[0];
-	r.bot  = ball[1].pos[1]-4;
-	ggprint8b(&r, 16, 0x00ffff00, "puck");
+	if(game.state == STATE_GAMEPLAY) {
+		r.center = 1;
+		r.left = ball[0].pos[0];
+		r.bot  = ball[0].pos[1]-4;
+		ggprint8b(&r, 16, 0x00000000, "Cue");
+		r.left = ball[1].pos[0];
+		r.bot  = ball[1].pos[1]-4;
+		ggprint8b(&r, 16, 0x00ffff00, "puck");
+	}
 }
 
 
