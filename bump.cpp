@@ -316,7 +316,7 @@ void init_balls(void)
 	ball[1].radius = 90.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
 
-	//
+	/*
 	ball[2].pos[0] = 400;
 	ball[2].pos[1] = 250;
 	ball[2].vel[0] = 0.0;
@@ -407,6 +407,7 @@ void init_balls(void)
 	ball[14].vel[1] = 0.0;
 	ball[14].radius = 25.0;
 	ball[14].mass = sphereVolume(ball[14].radius);
+	*/
 
 }
 
@@ -430,22 +431,23 @@ void scenario1(void)
 
 void scenario2(void)
 {
+        //cue ball
 	ball[0].pos[0] = xres/4-100;
 	ball[0].pos[1] = yres/2;
-	ball[0].vel[0] = 0.0;
+	ball[0].vel[0] = 1.0;
 	ball[0].vel[1] = 0.0;
 	ball[0].radius = 25.0;
 	ball[0].mass = sphereVolume(ball[0].radius);
 	//
 	ball[1].pos[0] = 400;
-	ball[1].pos[1] = 200;
+	ball[1].pos[1] = 250;
 	ball[1].vel[0] = 0.0;
 	ball[1].vel[1] = 0.0;
 	ball[1].radius = 25.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
 	//
 	ball[2].pos[0] = 400;
-	ball[2].pos[1] = 250;
+	ball[2].pos[1] = 200;
 	ball[2].vel[0] = 0.0;
 	ball[2].vel[1] = 0.0;
 	ball[2].radius = 25.0;
@@ -458,78 +460,78 @@ void scenario2(void)
 	ball[3].radius = 25.0;
 	ball[3].mass = sphereVolume(ball[3].radius);
 	//
-	ball[4].pos[0] = 400;
-	ball[4].pos[1] = 350;
+	ball[4].pos[0] = 450;
+	ball[4].pos[1] = 250;
 	ball[4].vel[0] = 0.0;
 	ball[4].vel[1] = 0.0;
 	ball[4].radius = 25.0;
 	ball[4].mass = sphereVolume(ball[4].radius);
 	//
-	ball[5].pos[0] = 400;
-	ball[5].pos[1] = 400;
+	ball[5].pos[0] = 450;
+	ball[5].pos[1] = 200;
 	ball[5].vel[0] = 0.0;
 	ball[5].vel[1] = 0.0;
 	ball[5].radius = 25.0;
 	ball[5].mass = sphereVolume(ball[5].radius);
 	//
-	ball[6].pos[0] = 400;
-	ball[6].pos[1] = 450;
+	ball[6].pos[0] = 450;
+	ball[6].pos[1] = 300;
 	ball[6].vel[0] = 0.0;
 	ball[6].vel[1] = 0.0;
 	ball[6].radius = 25.0;
 	ball[6].mass = sphereVolume(ball[6].radius);
 	//
-	ball[7].pos[0] = 400;
-	ball[7].pos[1] = 500;
+	ball[7].pos[0] = 500;
+	ball[7].pos[1] = 250;
 	ball[7].vel[0] = 0.0;
 	ball[7].vel[1] = 0.0;
 	ball[7].radius = 25.0;
 	ball[7].mass = sphereVolume(ball[7].radius);
 	//
-	ball[8].pos[0] = 400;
-	ball[8].pos[1] = 550;
+	ball[8].pos[0] = 500;
+	ball[8].pos[1] = 200;
 	ball[8].vel[0] = 0.0;
 	ball[8].vel[1] = 0.0;
 	ball[8].radius = 25.0;
 	ball[8].mass = sphereVolume(ball[8].radius);
 	//
-	ball[9].pos[0] = 400;
-	ball[9].pos[1] = 600;
+	ball[9].pos[0] = 500;
+	ball[9].pos[1] = 300;
 	ball[9].vel[0] = 0.0;
 	ball[9].vel[1] = 0.0;
 	ball[9].radius = 25.0;
 	ball[9].mass = sphereVolume(ball[9].radius);
 	//
-	ball[10].pos[0] = 400;
-	ball[10].pos[1] = 650;
+	ball[10].pos[0] = 550;
+	ball[10].pos[1] = 250;
 	ball[10].vel[0] = 0.0;
 	ball[10].vel[1] = 0.0;
 	ball[10].radius = 25.0;
 	ball[10].mass = sphereVolume(ball[10].radius);
 	//
-	ball[11].pos[0] = 400;
-	ball[11].pos[1] = 700;
+	ball[11].pos[0] = 550;
+	ball[11].pos[1] = 200;
 	ball[11].vel[0] = 0.0;
 	ball[11].vel[1] = 0.0;
 	ball[11].radius = 25.0;
 	ball[11].mass = sphereVolume(ball[11].radius);
 	//
-	ball[12].pos[0] = 400;
-	ball[12].pos[1] = 750;
+	ball[12].pos[0] = 550;
+	ball[12].pos[1] = 300;
 	ball[12].vel[0] = 0.0;
 	ball[12].vel[1] = 0.0;
 	ball[12].radius = 25.0;
 	ball[12].mass = sphereVolume(ball[12].radius);
 	//
-	ball[13].pos[0] = 400;
-	ball[13].pos[1] = 150;
+	ball[13].pos[0] = 600;
+	ball[13].pos[1] = 250;
 	ball[13].vel[0] = 0.0;
 	ball[13].vel[1] = 0.0;
 	ball[13].radius = 25.0;
 	ball[13].mass = sphereVolume(ball[13].radius);
 	//
-	ball[14].pos[0] = 400;
-	ball[14].pos[1] = 100;
+	ball[14].pos[0] = 600;
+	ball[14].pos[1] = 200;
 	ball[14].vel[0] = 0.0;
 	ball[14].vel[1] = 0.0;
 	ball[14].radius = 25.0;
