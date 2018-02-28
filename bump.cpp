@@ -236,6 +236,7 @@ class Game {
 //	Shape box[6];
 //	Particle particle[MAX_PARTICLES];
 	int n;
+	float moveSpeed;
 
 	State state;
 
@@ -247,6 +248,7 @@ class Game {
 	    	state = STATE_STARTUP;
 		spawner = false;
 		n = 0;
+		moveSpeed = 5;
 	}
 }game;
 
@@ -342,6 +344,11 @@ void init_opengl(void)
 
 void init_balls(void)
 {
+
+	game.player.radius = 25;
+	game.player.pos[0] = xres/2;
+	game.player.pos[1] = yres/2;
+
 	ball[0].pos[0] = 100;
 	ball[0].pos[1] = yres-150;
 	ball[0].vel[0] = 2.6;
@@ -359,99 +366,6 @@ void init_balls(void)
 	ball[1].force[1] = 0.0;
 	ball[1].radius = 90.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
-
-	/*
-	ball[2].pos[0] = 400;
-	ball[2].pos[1] = 250;
-	ball[2].vel[0] = 0.0;
-	ball[2].vel[1] = 0.0;
-	ball[2].radius = 25.0;
-	ball[2].mass = sphereVolume(ball[2].radius);
-	//
-	ball[3].pos[0] = 400;
-	ball[3].pos[1] = 300;
-	ball[3].vel[0] = 0.0;
-	ball[3].vel[1] = 0.0;
-	ball[3].radius = 25.0;
-	ball[3].mass = sphereVolume(ball[3].radius);
-	//
-	ball[4].pos[0] = 400;
-	ball[4].pos[1] = 350;
-	ball[4].vel[0] = 0.0;
-	ball[4].vel[1] = 0.0;
-	ball[4].radius = 25.0;
-	ball[4].mass = sphereVolume(ball[4].radius);
-	//
-	ball[5].pos[0] = 400;
-	ball[5].pos[1] = 400;
-	ball[5].vel[0] = 0.0;
-	ball[5].vel[1] = 0.0;
-	ball[5].radius = 25.0;
-	ball[5].mass = sphereVolume(ball[5].radius);
-	//
-	ball[6].pos[0] = 400;
-	ball[6].pos[1] = 450;
-	ball[6].vel[0] = 0.0;
-	ball[6].vel[1] = 0.0;
-	ball[6].radius = 25.0;
-	ball[6].mass = sphereVolume(ball[6].radius);
-	//
-	ball[7].pos[0] = 400;
-	ball[7].pos[1] = 500;
-	ball[7].vel[0] = 0.0;
-	ball[7].vel[1] = 0.0;
-	ball[7].radius = 25.0;
-	ball[7].mass = sphereVolume(ball[7].radius);
-	//
-	ball[8].pos[0] = 400;
-	ball[8].pos[1] = 550;
-	ball[8].vel[0] = 0.0;
-	ball[8].vel[1] = 0.0;
-	ball[8].radius = 25.0;
-	ball[8].mass = sphereVolume(ball[8].radius);
-	//
-	ball[9].pos[0] = 400;
-	ball[9].pos[1] = 600;
-	ball[9].vel[0] = 0.0;
-	ball[9].vel[1] = 0.0;
-	ball[9].radius = 25.0;
-	ball[9].mass = sphereVolume(ball[9].radius);
-	//
-	ball[10].pos[0] = 400;
-	ball[10].pos[1] = 650;
-	ball[10].vel[0] = 0.0;
-	ball[10].vel[1] = 0.0;
-	ball[10].radius = 25.0;
-	ball[10].mass = sphereVolume(ball[10].radius);
-	//
-	ball[11].pos[0] = 400;
-	ball[11].pos[1] = 700;
-	ball[11].vel[0] = 0.0;
-	ball[11].vel[1] = 0.0;
-	ball[11].radius = 25.0;
-	ball[11].mass = sphereVolume(ball[11].radius);
-	//
-	ball[12].pos[0] = 400;
-	ball[12].pos[1] = 750;
-	ball[12].vel[0] = 0.0;
-	ball[12].vel[1] = 0.0;
-	ball[12].radius = 25.0;
-	ball[12].mass = sphereVolume(ball[12].radius);
-	//
-	ball[13].pos[0] = 400;
-	ball[13].pos[1] = 150;
-	ball[13].vel[0] = 0.0;
-	ball[13].vel[1] = 0.0;
-	ball[13].radius = 25.0;
-	ball[13].mass = sphereVolume(ball[13].radius);
-	//
-	ball[14].pos[0] = 400;
-	ball[14].pos[1] = 100;
-	ball[14].vel[0] = 0.0;
-	ball[14].vel[1] = 0.0;
-	ball[14].radius = 25.0;
-	ball[14].mass = sphereVolume(ball[14].radius);
-	*/
 
 }
 
@@ -642,47 +556,58 @@ void check_mouse(XEvent *e)
 
 void check_keys(XEvent *e)
 {
-	//Was there input from the keyboard?
+
+	if(e->type == KeyRelease) {
+		int key = XLookupKeysym(&e->xkey, 0);
+		game.keys[key]=0;
+	}
+//Was there input from the keyboard?
 	if (e->type == KeyPress) {
 		int key = XLookupKeysym(&e->xkey, 0);
+		game.keys[key]=1;
 		switch(key) {
-			case XK_a:
-				//scenario
-				scenario1();
-				break;
-			case XK_b:
-				//scenario
-				scenario2();
-				break;
 			case XK_1:
+				//scenario
+
+				if(game.state == STATE_STARTUP) { scenario1(); }
+				break;
+			case XK_2:
+				//scenario
+				if(game.state == STATE_STARTUP) { scenario2(); }
+				break;
+			case XK_o:
 				ball[0].radius -= 1.0;
 				ball[0].mass = sphereVolume(ball[0].radius);
 				break;
-			case XK_2:
+			case XK_i:
 				ball[0].radius += 1.0;
 				ball[0].mass = sphereVolume(ball[0].radius);
 				break;
-			case XK_3:
+			case XK_k:
 				ball[1].radius -= 1.0;
 				ball[1].mass = sphereVolume(ball[1].radius);
 				break;
-			case XK_4:
+			case XK_l:
 				ball[1].radius += 1.0;
 				ball[1].mass = sphereVolume(ball[1].radius);
 				break;
-			case XK_Left:
-				ball[0].vel[0] -= 1.0;
+			case XK_a:
+				//ball[0].vel[0] -= 1.0;
+				//moveLeft();
 				break;
-			case XK_Right:
-				ball[0].vel[0] += 1.0;
+			case XK_d:
+				//moveRight();
+				//ball[0].vel[0] += 1.0;
 				break;
-			case XK_Up:
-				ball[0].vel[1] += 1.0;
-				break;
-			case XK_Down:
-				ball[0].vel[1] -= 1.0;
+			case XK_w:
+				//moveUp();
+				//ball[0].vel[1] += 1.0;
 				break;
 			case XK_s:
+				//moveDown();
+				//ball[0].vel[1] -= 1.0;
+				break;
+			case XK_m:
 				//press s to slow the balls
 				ball[0].vel[0] *= 0.5;
 				ball[0].vel[1] *= 0.5;
@@ -699,6 +624,36 @@ void check_keys(XEvent *e)
 		}
 	}
 }
+
+void moveLeft()
+{
+
+	game.player.pos[0] -= game.moveSpeed;
+
+
+}
+
+void moveRight()
+{
+		
+	game.player.pos[0] += game.moveSpeed;
+
+}
+
+void moveUp()
+{
+
+	game.player.pos[1] += game.moveSpeed;
+
+}
+
+void moveDown()
+{
+	
+	game.player.pos[1] -= game.moveSpeed;
+
+}
+
 
 void VecNormalize(Vec v)
 {
@@ -724,6 +679,19 @@ void VecNormalize2d(Vec v)
 
 void physics(void)
 {
+	if (game.keys[XK_a]) {
+		moveLeft();	
+	}
+	if (game.keys[XK_d]) {
+		moveRight();	
+	}
+	if (game.keys[XK_w]) {
+		moveUp();	
+	}
+	if (game.keys[XK_s]) {
+		moveDown();	
+	}
+
 	//Update positions
 	if (leftButtonDown) {
 		//Special physics applied here.
@@ -881,12 +849,32 @@ void drawBall(Flt rad)
 }
 
 
-void render(void)
+void drawPlayer(Flt rad)
 {
-	Rect r;
-	glClear(GL_COLOR_BUFFER_BIT);
-	//
-	if(game.state == STATE_GAMEPLAY) {
+	int i;
+	static int firsttime2=1;
+	static Flt verts[32][2];
+	static int n=32;
+	if (firsttime2) {
+		Flt ang=0.0;
+		Flt inc = 3.14159 * 2.0 / (Flt)n;
+		for (i=0; i<n; i++) {
+			verts[i][0] = sin(ang);
+			verts[i][1] = cos(ang);
+			ang += inc;
+		}
+		firsttime2=0;
+	}
+	glBegin(GL_TRIANGLE_FAN);
+		for (i=0; i<n; i++) {
+			glVertex2f(verts[i][0]*rad, verts[i][1]*rad);
+		}
+	glEnd();
+}
+
+void renderBalls(void)
+{
+
 	//draw balls
 	glColor3ub(255,255,255);
 	glPushMatrix();
@@ -981,17 +969,41 @@ void render(void)
 	glPopMatrix();
 	//
 	//
+}
+
+
+void render(void)
+{
+	Rect r;
+	glClear(GL_COLOR_BUFFER_BIT);
+	//
+	if(game.state == STATE_GAMEPLAY) {
+
+	//draw player
+	glColor3ub(0,0,0);
+	glPushMatrix();
+	glTranslatef(game.player.pos[0], game.player.pos[1], game.player.pos[2]);
+	drawPlayer(game.player.radius);
+	glPopMatrix();
+	//
+
+
+	    renderBalls();
 	}
 	if(game.state == STATE_STARTUP) {
-		r.bot = yres/2;
+
+
+
+		//show text box
+		r.bot = 400;
 		r.left = xres/2;
-		r.center = 0;
+		r.center = xres/2;
 		ggprint8b(&r, 16, 0x0000000, "x11 Wars");
-		ggprint8b(&r, 16, 0x0000000, "Arrows/mouse to move");
-		ggprint8b(&r, 16, 0x0000000, "S - Slow down movement");
-		ggprint8b(&r, 16, 0x0000000, "hold down 1, 2, 3, 4");
-		ggprint8b(&r, 16, 0x0000000, "A - scenario1");
-		ggprint8b(&r, 16, 0x0000000, "B - scenario2");
+		ggprint8b(&r, 16, 0x0000000, "WSAD to move");
+	//	ggprint8b(&r, 16, 0x0000000, "M - Slow down movement");
+	//	ggprint8b(&r, 16, 0x0000000, "hold down o, i, k, l");
+		ggprint8b(&r, 16, 0x0000000, "1 - Normal");
+		ggprint8b(&r, 16, 0x0000000, "2 - Hard");
 		ggprint8b(&r, 16, 0x0000000, "ESC - Pause");
 		ggprint8b(&r, 16, 0x0000000, "P - Quit");
 	}
@@ -1003,10 +1015,10 @@ void render(void)
 		r.center = 1;
 		r.left = ball[0].pos[0];
 		r.bot  = ball[0].pos[1]-4;
-		ggprint8b(&r, 16, 0x00000000, "Cue");
+		ggprint8b(&r, 16, 0x00000000, "Enemy 1");
 		r.left = ball[1].pos[0];
 		r.bot  = ball[1].pos[1]-4;
-		ggprint8b(&r, 16, 0x00ffff00, "puck");
+		ggprint8b(&r, 16, 0x00ffff00, "Enemy 2");
 	}
 }
 
