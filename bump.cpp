@@ -302,7 +302,7 @@ int main(void)
 		render();
 		x11.swapBuffers();
 	}
-	cleanup_fonts();
+	//cleanup_fonts();
 	return 0;
 }
 
@@ -337,7 +337,8 @@ void init_opengl(void)
 	glClearColor(0.6, 1.0, 0.6, 1.0);
 	//Do this to allow fonts
 	glEnable(GL_TEXTURE_2D);
-	initialize_fonts();
+	//enable fonts
+	//initialize_fonts();
 }
 
 #define sphereVolume(r) (r)*(r)*(r)*3.14159265358979*4.0/3.0;
@@ -366,6 +367,20 @@ void init_balls(void)
 	ball[1].force[1] = 0.0;
 	ball[1].radius = 90.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
+
+}
+
+void clearBalls(void)
+{
+	for( int i; i < 16; i++) {
+		ball[i].pos[0] = 200;
+		ball[i].pos[1] = yres-150;
+		ball[i].vel[0] = 0.0;
+		ball[i].vel[1] = 0.0;
+		ball[i].radius = 70.0;
+		ball[i].mass = sphereVolume(ball[i].radius);
+	}
+
 
 }
 
@@ -677,8 +692,24 @@ void VecNormalize2d(Vec v)
 	//v[2] *= len;
 }
 
+//called when player dies, will reset player pos and change to game over state
+void gameOver(void)
+{	
+	//playSound(1);
+	game.player.pos[0] = xres/2;
+	game.player.pos[1] = yres/2;
+	game.state = STATE_GAMEOVER;
+
+}
+
 void physics(void)
 {
+	if (game.state == STATE_GAMEOVER){
+		if(game.keys) {
+			game.state = STATE_STARTUP; 
+		}
+	}
+
 	if (game.keys[XK_a]) {
 		moveLeft();	
 	}
@@ -802,8 +833,35 @@ void physics(void)
 			}
 		}
 	}
-	//Check for collision with window edges
+	//Check for collision with window edges with player and balls
 	for (int i=0; i<n; i++) {
+
+		//PLAYER COLLIONS WITH WALLS
+		//
+		//check if player is against winow edges show game over when too close
+		if (game.player.pos[0] < game.player.radius && game.player.vel[0] <= 0.0) {
+		//	ball[i].vel[0] = -ball[i].vel[0];
+			game.player.vel[0] = -game.player.vel[0];
+			gameOver();
+		}
+		if (game.player.pos[0] >= (Flt)xres-game.player.radius &&
+				game.player.vel[0] >= 0.0) {
+		//	ball[i].vel[0] = -ball[i].vel[0];
+			gameOver();
+		}
+		if (game.player.pos[1] < game.player.radius && game.player.vel[1] <= 0.0) {
+			//ball[i].vel[1] = -ball[i].vel[1];
+			gameOver();
+		}
+		if (game.player.pos[1] >= (Flt)yres-game.player.radius &&
+				game.player.vel[1] >= 0.0) {
+			//ball[i].vel[1] = -ball[i].vel[1];
+			gameOver();
+		}
+
+		//BALL COLLIONS WITH WALLS
+		//
+		//check balls against window edges
 		if (ball[i].pos[0] < ball[i].radius && ball[i].vel[0] <= 0.0) {
 			ball[i].vel[0] = -ball[i].vel[0];
 			playSound(1);
@@ -976,19 +1034,35 @@ void render(void)
 {
 	Rect r;
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	if(game.state == STATE_GAMEOVER) {
+	
+		//clears the level of balls
+		//clearBalls();
+
+		//show text box
+		r.bot = 400;
+		r.left = xres/2;
+		r.center = xres/2;
+
+		//ggprint8b(&r, 16, 0x0000000, "GAME OVER");
+		//ggprint8b(&r, 16, 0x0000000, "try again?");
+
+	}
+
 	//
 	if(game.state == STATE_GAMEPLAY) {
 
-	//draw player
-	glColor3ub(0,0,0);
-	glPushMatrix();
-	glTranslatef(game.player.pos[0], game.player.pos[1], game.player.pos[2]);
-	drawPlayer(game.player.radius);
-	glPopMatrix();
-	//
+		//draw player
+		glColor3ub(0,0,0);
+		glPushMatrix();
+		glTranslatef(game.player.pos[0], game.player.pos[1], game.player.pos[2]);
+		drawPlayer(game.player.radius);
+		glPopMatrix();
+		//
 
 
-	    renderBalls();
+ 		renderBalls();
 	}
 	if(game.state == STATE_STARTUP) {
 
@@ -998,6 +1072,7 @@ void render(void)
 		r.bot = 400;
 		r.left = xres/2;
 		r.center = xres/2;
+		/*
 		ggprint8b(&r, 16, 0x0000000, "x11 Wars");
 		ggprint8b(&r, 16, 0x0000000, "WSAD to move");
 	//	ggprint8b(&r, 16, 0x0000000, "M - Slow down movement");
@@ -1006,6 +1081,7 @@ void render(void)
 		ggprint8b(&r, 16, 0x0000000, "2 - Hard");
 		ggprint8b(&r, 16, 0x0000000, "ESC - Pause");
 		ggprint8b(&r, 16, 0x0000000, "P - Quit");
+		*/
 	}
 //	char ts[16];
 //	sprintf(ts, "%i", lbumphigh);
@@ -1015,10 +1091,10 @@ void render(void)
 		r.center = 1;
 		r.left = ball[0].pos[0];
 		r.bot  = ball[0].pos[1]-4;
-		ggprint8b(&r, 16, 0x00000000, "Enemy 1");
+	//	ggprint8b(&r, 16, 0x00000000, "Enemy 1");
 		r.left = ball[1].pos[0];
 		r.bot  = ball[1].pos[1]-4;
-		ggprint8b(&r, 16, 0x00ffff00, "Enemy 2");
+	//	ggprint8b(&r, 16, 0x00ffff00, "Enemy 2");
 	}
 }
 
