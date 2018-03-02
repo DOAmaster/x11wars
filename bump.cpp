@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <unistd.h>
+#include <unistd.h>
 #include <time.h>
 #include <math.h>
 #include <X11/Xlib.h>
@@ -110,7 +110,101 @@ public:
 	}
 } x11;
 
-//#define USE_SOUND
+
+class Image {
+public:
+	int width, height;
+	unsigned char *data;
+	~Image() { delete [] data; }
+	Image(const char *fname) {
+		if (fname[0] == '\0')
+			return;
+		//printf("fname **%s**\n", fname);
+		int ppmFlag = 0;
+		char name[40];
+		strcpy(name, fname);
+		int slen = strlen(name);
+		char ppmname[80];
+		if (strncmp(name+(slen-4), ".ppm", 4) == 0)
+			ppmFlag = 1;
+		if (ppmFlag) {
+			strcpy(ppmname, name);
+		} else {
+			name[slen-4] = '\0';
+			//printf("name **%s**\n", name);
+			sprintf(ppmname,"%s.ppm", name);
+			//printf("ppmname **%s**\n", ppmname);
+			char ts[100];
+			//system("convert eball.jpg eball.ppm");
+			sprintf(ts, "convert %s %s", fname, ppmname);
+			system(ts);
+		}
+		//sprintf(ts, "%s", name);
+		FILE *fpi = fopen(ppmname, "r");
+		if (fpi) {
+			char line[200];
+			fgets(line, 200, fpi);
+			fgets(line, 200, fpi);
+			while (line[0] == '#')
+				fgets(line, 200, fpi);
+			sscanf(line, "%i %i", &width, &height);
+			fgets(line, 200, fpi);
+			//get pixel data
+			int n = width * height * 3;			
+			data = new unsigned char[n];			
+			for (int i=0; i<n; i++)
+				data[i] = fgetc(fpi);
+			fclose(fpi);
+		} else {
+			printf("ERROR opening image: %s\n",ppmname);
+			exit(0);
+		}
+		if (!ppmFlag)
+			unlink(ppmname);
+	}
+};
+Image img[2] = {
+"./title.jpg",
+"./gameover.jpg" };
+
+unsigned char *buildAlphaData(Image *img)
+{
+	//add 4th component to RGB stream...
+	int i;
+	int a,b,c;
+	unsigned char *newdata, *ptr;
+	unsigned char *data = (unsigned char *)img->data;
+	newdata = (unsigned char *)malloc(img->width * img->height * 4);
+	ptr = newdata;
+	for (i=0; i<img->width * img->height * 3; i+=3) {
+		a = *(data+0);
+		b = *(data+1);
+		c = *(data+2);
+		*(ptr+0) = a;
+		*(ptr+1) = b;
+		*(ptr+2) = c;
+		//-----------------------------------------------
+		//get largest color component...
+		//*(ptr+3) = (unsigned char)((
+		//		(int)*(ptr+0) +
+		//		(int)*(ptr+1) +
+		//		(int)*(ptr+2)) / 3);
+		//d = a;
+		//if (b >= a && b >= c) d = b;
+		//if (c >= a && c >= b) d = c;
+		//*(ptr+3) = d;
+		//-----------------------------------------------
+		//this code optimizes the commented code above.
+		*(ptr+3) = (a|b|c);
+		//-----------------------------------------------
+		ptr += 4;
+		data += 3;
+	}
+	return newdata;
+}
+
+
+//
 #ifdef USE_SOUND
 #include </usr/include/AL/alut.h>
 class Openal {
@@ -238,6 +332,9 @@ class Game {
 	int n;
 	float moveSpeed;
 
+	GLuint gameOverTexture;
+	GLuint titleTexture;
+
 	State state;
 
 	bool spawner;
@@ -339,6 +436,20 @@ void init_opengl(void)
 	glEnable(GL_TEXTURE_2D);
 	//enable fonts
 	//initialize_fonts();
+
+	//create opengl texture elements
+	glGenTextures(1, &game.titleTexture);
+	glGenTextures(1, &game.gameOverTexture);
+
+	//title image
+	glBindTexture(GL_TEXTURE_2D, game.titleTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+		img[1].width, img[1].height,
+		0, GL_RGB, GL_UNSIGNED_BYTE, img[1].data);
+
 }
 
 #define sphereVolume(r) (r)*(r)*(r)*3.14159265358979*4.0/3.0;
@@ -1066,6 +1177,14 @@ void render(void)
 	}
 	if(game.state == STATE_STARTUP) {
 
+		glBindTexture(GL_TEXTURE_2D, game.titleTexture);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex2i(0, yres);
+			glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, yres);
+			glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, 0);
+		glEnd();
+	
 
 
 		//show text box
