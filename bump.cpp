@@ -1,5 +1,6 @@
 //Modified by: Derrick Alden
 //program: bump.cpp
+//github: https://github.com/doamaster/x11wars
 //author:  Gordon Griesel
 //date:    2018
 //Depending on your Linux distribution,
@@ -32,8 +33,31 @@ typedef Flt Vec[3];
 #define VecCopy2d(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];
 #define VecNegate2d(a) (a)[0]=(-(a)[0]); (a)[1]=(-(a)[1]);
 #define VecDot2d(a,b) ((a)[0]*(b)[0]+(a)[1]*(b)[1])
+#define MAX_PARTICLES 1000
+#define GRAVITY 0.1
+
+//might use for future ai 
+const float gravity = 0.2f;
+const int MAX_BULLETS = 11;
+
 static int xres=800, yres=600;
 void setup_screen_res(const int w, const int h);
+
+
+struct Shape {
+
+	float width, height;
+	float radius;
+	Vec center;
+
+};
+
+struct Particle {
+	Shape s;
+	Vec velocity;
+};
+
+
 
 class X11_wrapper {
 	//X Windows variables
@@ -320,8 +344,10 @@ class Game {
     public:
 	Player player;
 //	Shape box[6];
-//	Particle particle[MAX_PARTICLES];
+	Particle particle[MAX_PARTICLES];
 	int n;
+	int nBullets;
+	int maxBullets;
 	float moveSpeed;
 
 	GLuint gameOverTexture;
@@ -331,6 +357,7 @@ class Game {
 
 	bool spawner;
 
+
 	unsigned char keys[65535];
 
 	Game(){
@@ -338,12 +365,29 @@ class Game {
 		spawner = false;
 		n = 0;
 		moveSpeed = 5;
+		maxBullets = 10;
+		nBullets = 0;
 	}
 }game;
 
+//extern void particleVelocity(Particle *p);
+#define rnd() (float)rand() / (float)RAND_MAX
 
 
-//-----------------------------------------------------------------------------
+void makeParticle(int x, int y)
+{
+	if (game.nBullets >= game.maxBullets)
+		return;
+	//Particle p = game.particle[game.nBullets];
+	game.particle[game.nBullets].s.center[0] = x;
+	game.particle[game.nBullets].s.center[1] = y;
+//	particleVelocity(p);
+	game.particle[game.nBullets].velocity[0] = rnd() * 1.0 -.5; 
+	game.particle[game.nBullets].velocity[1] = rnd() * 1.0 -.5; 
+	game.nBullets++;
+}
+
+
 //Setup timers
 const double physicsRate = 1.0 / 60.0;
 const double oobillion = 1.0 / 1e9;
@@ -756,6 +800,12 @@ void check_keys(XEvent *e)
 	}
 }
 
+void shootUp()
+{
+	makeParticle(game.player.pos[0], game.player.pos[1]);
+
+}
+
 void moveLeft()
 {
 
@@ -827,6 +877,9 @@ void physics(void)
 		}
 	}
 	*/
+	if (game.keys[XK_Up]) {
+		shootUp();
+	}
 
 	if (game.keys[XK_a]) {
 		moveLeft();	
@@ -954,6 +1007,32 @@ void physics(void)
 			}
 		}
 	}
+
+	//render bullet particles
+	for (int i=0; i < game.nBullets; i++) { 
+		game.particle[i].velocity[1] -= GRAVITY;
+		game.particle[i].s.center[0] += game.particle[i].s.center[0];
+		game.particle[i].s.center[1] += game.particle[i].s.center[1];
+
+		//check for bullets hitting other stuff
+		/*
+		for (int j = 0; j < game.maxEnemy1; j++) {
+			if(game.particle[i].center[1] < game.enemy1.center[1]
+			 + game.enemy1.height && game.enemy1.center[0] - game.enemy1.width) {
+				
+				game.partical[i].velocity[2] = -game.particle[i].velocity[2];
+				}
+		}
+		*/
+
+		//check off screen bullets
+		if(game.particle[i].s.center[1] < 0.0 || game.particle[i].s.center[1] > yres) {
+			game.particle[i] = game.particle[game.nBullets-1];
+			game.nBullets--;
+		}
+
+	}
+
 
 
 	//Check for collision with window edges with player and balls
@@ -1192,6 +1271,28 @@ void render(void)
 		//
 		//
  		renderBalls();
+
+
+	
+		//render particles
+		//still needs some love
+		float h, w;
+		for (int i = 0; i < game.maxBullets; i++) {
+		glPushMatrix();
+		glColor3ub(150,160,220);
+		w = 2;
+		h = 2;
+		glBegin(GL_QUADS);
+		glVertex2i(game.particle[i].s.center[0]-w, game.particle[i].s.center[1]-h);
+		glVertex2i(game.particle[i].s.center[0]-w, game.particle[i].s.center[1]+h);
+		glVertex2i(game.particle[i].s.center[0]+w, game.particle[i].s.center[1]+h);
+		glVertex2i(game.particle[i].s.center[0]+w, game.particle[i].s.center[1]-h);
+		glEnd();
+		glPopMatrix();
+	}
+
+
+
 	}
 	if(game.state == STATE_STARTUP) {
 
@@ -1224,21 +1325,8 @@ void render(void)
 		ggprint8b(&r, 16, 0x0000000, "P - Quit");
 		*/
 	}
-//	char ts[16];
-//	sprintf(ts, "%i", lbumphigh);
-//	ggprint8b(&r, 16, 0x00ff000, ts);
-	//
-	/*
-	if(game.state == STATE_GAMEPLAY) {
-		r.center = 1;
-		r.left = ball[0].pos[0];
-		r.bot  = ball[0].pos[1]-4;
-	//	ggprint8b(&r, 16, 0x00000000, "Enemy 1");
-		r.left = ball[1].pos[0];
-		r.bot  = ball[1].pos[1]-4;
-	//	ggprint8b(&r, 16, 0x00ffff00, "Enemy 2");
-	}
-	*/
+
+
 }
 
 
