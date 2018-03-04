@@ -1,15 +1,7 @@
 //Modified by: Derrick Alden
 //program: bump.cpp
 //author:  Gordon Griesel
-//date:    2014, 2017
-//
-//-------------------------------------------
-//Press arrow keys to move a ball
-//Press S to slow the ball movement
-//Grab and move a ball with mouse left button
-//-------------------------------------------
-//
-//
+//date:    2018
 //Depending on your Linux distribution,
 //may have to install these packages:
 // libx11-dev
@@ -97,7 +89,7 @@ public:
 	void set_title(void) {
 		//Set the window title bar.
 		XMapWindow(dpy, win);
-		XStoreName(dpy, win, "x11 Wars");
+		XStoreName(dpy, win, "X11 WARS");
 	}
 	bool getPending() {
 		return XPending(dpy);
@@ -438,11 +430,21 @@ void init_opengl(void)
 	//initialize_fonts();
 
 	//create opengl texture elements
-	glGenTextures(1, &game.titleTexture);
+	glGenTextures(1, &game.titleTexture);	
 	glGenTextures(1, &game.gameOverTexture);
 
 	//title image
 	glBindTexture(GL_TEXTURE_2D, game.titleTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+		img[0].width, img[0].height,
+		0, GL_RGB, GL_UNSIGNED_BYTE, img[0].data);
+
+
+	//game over image
+	glBindTexture(GL_TEXTURE_2D, game.gameOverTexture);
 	//
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
@@ -815,11 +817,13 @@ void gameOver(void)
 
 void physics(void)
 {
+	/*
 	if (game.state == STATE_GAMEOVER){
-		if(game.keys) {
+		if(game.keys[XK_C]) {
 			game.state = STATE_STARTUP; 
 		}
 	}
+	*/
 
 	if (game.keys[XK_a]) {
 		moveLeft();	
@@ -1147,17 +1151,19 @@ void render(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	if(game.state == STATE_GAMEOVER) {
-	
-		//clears the level of balls
-		//clearBalls();
 
-		//show text box
-		r.bot = 400;
-		r.left = xres/2;
-		r.center = xres/2;
+		//ESC key switches back to STATE_STARTUP
+		//
+		//show gameOver texture
+		glBindTexture(GL_TEXTURE_2D, game.gameOverTexture);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex2i(0, yres);
+			glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, yres);
+			glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, 0);
+		glEnd();
 
-		//ggprint8b(&r, 16, 0x0000000, "GAME OVER");
-		//ggprint8b(&r, 16, 0x0000000, "try again?");
+
 
 	}
 
@@ -1177,6 +1183,7 @@ void render(void)
 	}
 	if(game.state == STATE_STARTUP) {
 
+		//show title menu texture
 		glBindTexture(GL_TEXTURE_2D, game.titleTexture);
 		glBegin(GL_QUADS);
 			glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
@@ -1187,11 +1194,12 @@ void render(void)
 	
 
 
+		/*
 		//show text box
 		r.bot = 400;
 		r.left = xres/2;
 		r.center = xres/2;
-		/*
+		
 		ggprint8b(&r, 16, 0x0000000, "x11 Wars");
 		ggprint8b(&r, 16, 0x0000000, "WSAD to move");
 	//	ggprint8b(&r, 16, 0x0000000, "M - Slow down movement");
@@ -1206,6 +1214,7 @@ void render(void)
 //	sprintf(ts, "%i", lbumphigh);
 //	ggprint8b(&r, 16, 0x00ff000, ts);
 	//
+	/*
 	if(game.state == STATE_GAMEPLAY) {
 		r.center = 1;
 		r.left = ball[0].pos[0];
@@ -1215,6 +1224,7 @@ void render(void)
 		r.bot  = ball[1].pos[1]-4;
 	//	ggprint8b(&r, 16, 0x00ffff00, "Enemy 2");
 	}
+	*/
 }
 
 
