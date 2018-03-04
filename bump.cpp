@@ -423,7 +423,9 @@ void init_opengl(void)
 	//This sets 2D mode (no perspective)
 	glOrtho(0, xres, 0, yres, -1, 1);
 	//Clear the screen
-	glClearColor(0.6, 1.0, 0.6, 1.0);
+	//set screen background color
+	//currently set to black
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	//Do this to allow fonts
 	glEnable(GL_TEXTURE_2D);
 	//enable fonts
@@ -500,6 +502,7 @@ void clearBalls(void)
 void scenario1(void)
 {
 	game.state = STATE_GAMEPLAY;
+	//
 	ball[0].pos[0] = 200;
 	ball[0].pos[1] = yres-150;
 	ball[0].vel[0] = 0.0;
@@ -520,7 +523,7 @@ void scenario2(void)
 {
 
 	game.state = STATE_GAMEPLAY;
-        //cue ball
+        //
 	ball[0].pos[0] = xres/4-100;
 	ball[0].pos[1] = yres/2;
 	ball[0].vel[0] = 1.0;
@@ -861,7 +864,7 @@ void physics(void)
 		ball[1].vel[0] *= 0.99;
 		ball[1].vel[1] *= 0.99;
 		//
-		//bounce off window sides...
+		//bounce balls off window sides...
 		if (ball[1].pos[0] < ball[1].radius) {
 			ball[1].pos[0] = ball[1].radius + 0.1;
 			if (ball[1].vel[0] < 0.0)
@@ -896,10 +899,11 @@ void physics(void)
 	}
 	//check for collision here
 	//add printf statments to help debug
-	Flt distance, speed;
+	Flt distance, pdistance, speed;
 	Flt movi[2], movj[2];
 	Flt massFactor, massi, massj;
 	Vec vcontact[2];
+	Vec pcontact[2];
 	Vec vmove[2];
 	Flt dot0, dot1;
 	for (int i=0; i<n-1; i++) {
@@ -911,6 +915,8 @@ void physics(void)
 			//vcontact[0][2] = 0.0;
 			distance = sqrt(vcontact[0][0]*vcontact[0][0] +
 							vcontact[0][1]*vcontact[0][1]);
+
+			//ball hits ball collision
 			if (distance < (ball[i].radius + ball[j].radius)) {
 				//We have a collision!
 				playSound(0);
@@ -948,6 +954,8 @@ void physics(void)
 			}
 		}
 	}
+
+
 	//Check for collision with window edges with player and balls
 	for (int i=0; i<n; i++) {
 
@@ -1049,93 +1057,93 @@ void renderBalls(void)
 {
 
 	//draw balls
-	glColor3ub(255,255,255);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[0].pos[0], ball[0].pos[1], ball[0].pos[2]);
 	drawBall(ball[0].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[1].pos[0], ball[1].pos[1], ball[1].pos[2]);
 	drawBall(ball[1].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[3].pos[0], ball[3].pos[1], ball[3].pos[2]);
 	drawBall(ball[3].radius);
 	glPopMatrix();
 	//
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[4].pos[0], ball[4].pos[1], ball[4].pos[2]);
 	drawBall(ball[4].radius);
 	glPopMatrix();
 	//
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[5].pos[0], ball[5].pos[1], ball[5].pos[2]);
 	drawBall(ball[5].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[6].pos[0], ball[6].pos[1], ball[6].pos[2]);
 	drawBall(ball[6].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[7].pos[0], ball[7].pos[1], ball[7].pos[2]);
 	drawBall(ball[7].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[8].pos[0], ball[8].pos[1], ball[8].pos[2]);
 	drawBall(ball[8].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[9].pos[0], ball[9].pos[1], ball[9].pos[2]);
 	drawBall(ball[9].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[10].pos[0], ball[10].pos[1], ball[10].pos[2]);
 	drawBall(ball[10].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[11].pos[0], ball[11].pos[1], ball[11].pos[2]);
 	drawBall(ball[11].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[12].pos[0], ball[12].pos[1], ball[12].pos[2]);
 	drawBall(ball[12].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[13].pos[0], ball[13].pos[1], ball[13].pos[2]);
 	drawBall(ball[13].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[14].pos[0], ball[14].pos[1], ball[14].pos[2]);
 	drawBall(ball[14].radius);
 	glPopMatrix();
 	//
-	glColor3ub(130,60,90);
+	glColor3ub(17,219,17);
 	glPushMatrix();
 	glTranslatef(ball[15].pos[0], ball[15].pos[1], ball[15].pos[2]);
 	drawBall(ball[15].radius);
@@ -1152,9 +1160,14 @@ void render(void)
 
 	if(game.state == STATE_GAMEOVER) {
 
+
+		glColor3ub(255,255,255);
+
 		//ESC key switches back to STATE_STARTUP
 		//
 		//show gameOver texture
+		//
+		
 		glBindTexture(GL_TEXTURE_2D, game.gameOverTexture);
 		glBegin(GL_QUADS);
 			glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
@@ -1171,18 +1184,19 @@ void render(void)
 	if(game.state == STATE_GAMEPLAY) {
 
 		//draw player
-		glColor3ub(0,0,0);
+		glColor3ub(255,255,255);
 		glPushMatrix();
 		glTranslatef(game.player.pos[0], game.player.pos[1], game.player.pos[2]);
 		drawPlayer(game.player.radius);
 		glPopMatrix();
 		//
-
-
+		//
  		renderBalls();
 	}
 	if(game.state == STATE_STARTUP) {
 
+
+		glColor3ub(255,255,255);
 		//show title menu texture
 		glBindTexture(GL_TEXTURE_2D, game.titleTexture);
 		glBegin(GL_QUADS);
