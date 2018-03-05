@@ -15,6 +15,10 @@
 #include <unistd.h>
 #include <time.h>
 #include <math.h>
+#include <ctime>
+#include <cmath>
+#include <iostream>
+#include <cstdlib>
 #include <X11/Xlib.h>
 //#include <X11/Xutil.h>
 //#include <GL/gl.h>
@@ -35,6 +39,7 @@ typedef Flt Vec[3];
 #define VecDot2d(a,b) ((a)[0]*(b)[0]+(a)[1]*(b)[1])
 #define MAX_PARTICLES 1000
 #define GRAVITY 0.1
+#define PI 3.141592653589793
 
 //might use for future ai 
 const float gravity = 0.2f;
@@ -55,6 +60,17 @@ struct Shape {
 struct Particle {
 	Shape s;
 	Vec velocity;
+};
+
+class Bullet {
+    public:
+	Vec pos;
+	Vec vel;
+	float color[3];
+	struct timespec time;
+    public:
+	Bullet() { }
+
 };
 
 
@@ -326,6 +342,7 @@ public:
 	Vec pos;
 	Vec vel;
 	Vec force;
+	float angle;
 	float radius;
 	float mass;
 };
@@ -339,6 +356,7 @@ enum State {
 
 };
 
+const int MAX_BULELTS = 11;
 
 class Game {
     public:
@@ -349,6 +367,10 @@ class Game {
 	int nBullets;
 	int maxBullets;
 	float moveSpeed;
+
+	Bullet *barr;
+	struct timespec bulletTimer;
+	
 
 	GLuint gameOverTexture;
 	GLuint titleTexture;
@@ -361,6 +383,7 @@ class Game {
 	unsigned char keys[65535];
 
 	Game(){
+	    	barr = new Bullet[MAX_BULLETS];
 	    	state = STATE_STARTUP;
 		spawner = false;
 		n = 0;
@@ -368,7 +391,10 @@ class Game {
 		maxBullets = 10;
 		nBullets = 0;
 	}
-}game;
+	//clock_gettime(CLOCK_REALTIME, &bulletTimer);
+
+}
+game;
 
 //extern void particleVelocity(Particle *p);
 #define rnd() (float)rand() / (float)RAND_MAX
@@ -382,8 +408,8 @@ void makeParticle(int x, int y)
 	game.particle[game.nBullets].s.center[0] = x;
 	game.particle[game.nBullets].s.center[1] = y;
 //	particleVelocity(p);
-	game.particle[game.nBullets].velocity[0] = rnd() * 1.0 -.5; 
-	game.particle[game.nBullets].velocity[1] = rnd() * 1.0 -.5; 
+//	game.particle[game.nBullets].velocity[0] = rnd() * 1.0 -.5; 
+//	game.particle[game.nBullets].velocity[1] = rnd() * 1.0 -.5; 
 	game.nBullets++;
 }
 
@@ -803,6 +829,8 @@ void check_keys(XEvent *e)
 void shootUp()
 {
 	makeParticle(game.player.pos[0], game.player.pos[1]);
+	game.particle[game.nBullets].velocity[0] = 5; 
+	game.particle[game.nBullets].velocity[1] = 5; 
 
 }
 
@@ -877,6 +905,42 @@ void physics(void)
 		}
 	}
 	*/
+
+    	if (game.keys[XK_space]) {
+		struct timespec bt;
+		clock_gettime(CLOCK_REALTIME, &bt);
+		double ts = timeDiff(&game.bulletTimer, &bt);
+		if (ts > 0.1) {
+			timeCopy(&game.bulletTimer, &bt);
+			if (game.nBullets < MAX_BULLETS) {
+
+                                //shoot a bullet...
+                                //Bullet *b = new Bullet;
+                               // Bullet *b = game.barr[game.nBullets];
+                                timeCopy(&game.barr[game.nBullets].time, &bt);
+                                game.barr[game.nBullets].pos[0] = game.player.pos[0];
+                                game.barr[game.nBullets].pos[1] = game.player.pos[1];
+                                game.barr[game.nBullets].vel[0] = game.player.vel[0];
+                                game.barr[game.nBullets].vel[1] = game.player.vel[1];
+                                //convert ship angle to radians
+                                Flt rad = ((game.player.angle+90.0) / 360.0f) * PI * 2.0;
+                                //convert angle to a vector
+                                Flt xdir = cos(rad);
+                                Flt ydir = sin(rad);
+                                game.barr[game.nBullets].pos[0] += xdir*20.0f;
+                                game.barr[game.nBullets].pos[1] += ydir*20.0f;
+                                game.barr[game.nBullets].vel[0] += xdir*6.0f + rnd()*0.1;
+                                game.barr[game.nBullets].vel[1] += ydir*6.0f + rnd()*0.1;
+                                game.barr[game.nBullets].color[0] = 1.0f;
+                                game.barr[game.nBullets].color[1] = 1.0f;
+                                game.barr[game.nBullets].color[2] = 1.0f;
+                                game.nBullets++;
+
+			}
+		}
+
+	}
+
 	if (game.keys[XK_Up]) {
 		shootUp();
 	}
@@ -893,6 +957,44 @@ void physics(void)
 	if (game.keys[XK_s]) {
 		moveDown();	
 	}
+
+        //
+        //Update bullet positions
+        struct timespec bt;
+        clock_gettime(CLOCK_REALTIME, &bt);
+        int i=0;
+        while (i < game.nBullets) {
+                //Bullet *b = &g.barr[i];
+                //How long has bullet been alive?
+               // double ts = timeDiff(game.barr[game.nBullets].bulletTimer, &bt);
+               // if (ts > 2.5) {
+                        //time to delete the bullet.
+                //        memcpy(&g.barr[i], &g.barr[g.nbullets-1],
+                  //              sizeof(Bullet));
+                    //    g.nbullets--;
+                        //do not increment i.
+                      //  continue;
+                
+                //move the bullet
+                game.barr[game.nBullets].pos[0] += game.barr[game.nBullets].vel[0];
+                game.barr[game.nBullets].pos[1] += game.barr[game.nBullets].vel[1];
+                //Check for collision with window edges
+                if (game.barr[game.nBullets].pos[0] < 0.0) {
+                        game.barr[game.nBullets].pos[0] += (float)xres;
+                }
+                else if (game.barr[game.nBullets].pos[0] > (float)xres) {
+                        game.barr[game.nBullets].pos[0] -= (float)xres;
+                }
+                else if (game.barr[game.nBullets].pos[1] < 0.0) {
+                        game.barr[game.nBullets].pos[1] += (float)yres;
+                }
+                else if (game.barr[game.nBullets].pos[1] > (float)yres) {
+                        game.barr[game.nBullets].pos[1] -= (float)yres;
+                }
+                i++;
+        }
+        //
+
 
 	//Update positions
 	if (leftButtonDown) {
