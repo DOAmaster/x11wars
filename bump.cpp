@@ -388,7 +388,7 @@ class Game {
 		spawner = false;
 		n = 0;
 		moveSpeed = 5;
-		maxBullets = 10;
+		maxBullets = 25;
 		nBullets = 0;
 	}
 	//clock_gettime(CLOCK_REALTIME, &bulletTimer);
@@ -397,7 +397,6 @@ class Game {
 game;
 
 //extern void particleVelocity(Particle *p);
-#define rnd() (float)rand() / (float)RAND_MAX
 
 
 void makeParticle(int x, int y)
@@ -826,11 +825,109 @@ void check_keys(XEvent *e)
 	}
 }
 
+
+#define rnd() (float)rand() / (float)RAND_MAX
 void shootUp()
 {
-	makeParticle(game.player.pos[0], game.player.pos[1]);
-	game.particle[game.nBullets].velocity[0] = 5; 
-	game.particle[game.nBullets].velocity[1] = 5; 
+//	makeParticle(game.player.pos[0], game.player.pos[1]);
+//	game.particle[game.nBullets].velocity[0] = 0; 
+//	game.particle[game.nBullets].velocity[1] = 5; 
+		if (game.nBullets >= game.maxBullets)
+		return;
+	//Particle p = game.particle[game.nBullets];
+	game.particle[game.nBullets].s.center[0] = game.player.pos[0];
+	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
+	game.particle[game.nBullets].velocity[0] = rnd() * .1; 
+	game.particle[game.nBullets].velocity[1] = rnd() * 2.0; 
+	game.nBullets++;
+
+
+}
+
+void shootDown()
+{
+//	makeParticle(game.player.pos[0], game.player.pos[1]);
+//	game.particle[game.nBullets].velocity[0] = 0; 
+//	game.particle[game.nBullets].velocity[1] = 5; 
+		if (game.nBullets >= game.maxBullets)
+		return;
+	//Particle p = game.particle[game.nBullets];
+	game.particle[game.nBullets].s.center[0] = game.player.pos[0];
+	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
+	game.particle[game.nBullets].velocity[0] = -(rnd() * .1); 
+	game.particle[game.nBullets].velocity[1] = -(rnd() * 2.0); 
+	game.nBullets++;
+
+
+}
+
+
+void shootDownLeft()
+{
+//	makeParticle(game.player.pos[0], game.player.pos[1]);
+//	game.particle[game.nBullets].velocity[0] = 0; 
+//	game.particle[game.nBullets].velocity[1] = 5; 
+		if (game.nBullets >= game.maxBullets)
+		return;
+	//Particle p = game.particle[game.nBullets];
+	game.particle[game.nBullets].s.center[0] = game.player.pos[0];
+	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
+	game.particle[game.nBullets].velocity[0] = -(rnd() * 2.0); 
+	game.particle[game.nBullets].velocity[1] = -(rnd() * 2.0); 
+	game.nBullets++;
+
+
+}
+
+void shootDownRight()
+{
+//	makeParticle(game.player.pos[0], game.player.pos[1]);
+//	game.particle[game.nBullets].velocity[0] = 0; 
+//	game.particle[game.nBullets].velocity[1] = 5; 
+		if (game.nBullets >= game.maxBullets)
+		return;
+	//Particle p = game.particle[game.nBullets];
+	game.particle[game.nBullets].s.center[0] = game.player.pos[0];
+	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
+	game.particle[game.nBullets].velocity[0] = rnd() * 2.0; 
+	game.particle[game.nBullets].velocity[1] = -(rnd() * 2.0); 
+	game.nBullets++;
+
+
+}
+
+
+void shootLeft()
+{
+//	makeParticle(game.player.pos[0], game.player.pos[1]);
+//	game.particle[game.nBullets].velocity[0] = 0; 
+//	game.particle[game.nBullets].velocity[1] = 5; 
+		if (game.nBullets >= game.maxBullets)
+		return;
+	//Particle p = game.particle[game.nBullets];
+	game.particle[game.nBullets].s.center[0] = game.player.pos[0];
+	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
+	game.particle[game.nBullets].velocity[0] = -(rnd() * 2.0); 
+	game.particle[game.nBullets].velocity[1] = (rnd() * .1); 
+	game.nBullets++;
+
+
+}
+
+void shootRight()
+{
+//	makeParticle(game.player.pos[0], game.player.pos[1]);
+//	game.particle[game.nBullets].velocity[0] = 0; 
+//	game.particle[game.nBullets].velocity[1] = 5; 
+		if (game.nBullets >= game.maxBullets)
+		return;
+	//Particle p = game.particle[game.nBullets];
+	game.particle[game.nBullets].s.center[0] = game.player.pos[0];
+	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
+	game.particle[game.nBullets].velocity[0] = rnd() * 2.0; 
+	game.particle[game.nBullets].velocity[1] = rnd() * .1; 
+	game.nBullets++;
+
 
 }
 
@@ -940,11 +1037,33 @@ void physics(void)
 		}
 
 	}
+	
+	//shooting key checks
+	if (game.keys[XK_Down] && game.keys[XK_Left]) {
+		shootDownLeft();
+	} else if (game.keys[XK_Down] ) {
+		shootDown();
+	} else if (game.keys[XK_Left] ) {
+		shootLeft();
+	}
 
 	if (game.keys[XK_Up]) {
 		shootUp();
 	}
+	/*
+	if (game.keys[XK_Down]) {
+		shootDown();
+	}
 
+	if (game.keys[XK_Left]) {
+		shootLeft();
+	}
+	*/
+	if (game.keys[XK_Right]) {
+		shootRight();
+	}
+
+	//movement key checks
 	if (game.keys[XK_a]) {
 		moveLeft();	
 	}
@@ -960,7 +1079,8 @@ void physics(void)
 
         //
         //Update bullet positions
-        struct timespec bt;
+        /*
+	struct timespec bt;
         clock_gettime(CLOCK_REALTIME, &bt);
         int i=0;
         while (i < game.nBullets) {
@@ -993,7 +1113,7 @@ void physics(void)
                 }
                 i++;
         }
-        //
+        */
 
 
 	//Update positions
@@ -1112,9 +1232,11 @@ void physics(void)
 
 	//render bullet particles
 	for (int i=0; i < game.nBullets; i++) { 
-		game.particle[i].velocity[1] -= GRAVITY;
-		game.particle[i].s.center[0] += game.particle[i].s.center[0];
-		game.particle[i].s.center[1] += game.particle[i].s.center[1];
+		//pulls the bullets down by gravity
+	    	//game.particle[i].velocity[1] -= GRAVITY;
+
+		game.particle[i].s.center[0] += game.particle[i].velocity[0] * 5;
+		game.particle[i].s.center[1] += game.particle[i].velocity[1] * 5;
 
 		//check for bullets hitting other stuff
 		/*
@@ -1129,6 +1251,10 @@ void physics(void)
 
 		//check off screen bullets
 		if(game.particle[i].s.center[1] < 0.0 || game.particle[i].s.center[1] > yres) {
+			game.particle[i] = game.particle[game.nBullets-1];
+			game.nBullets--;
+		}
+		if(game.particle[i].s.center[0] < 0.0 || game.particle[i].s.center[0] > xres) {
 			game.particle[i] = game.particle[game.nBullets-1];
 			game.nBullets--;
 		}
@@ -1379,7 +1505,7 @@ void render(void)
 		//render particles
 		//still needs some love
 		float h, w;
-		for (int i = 0; i < game.maxBullets; i++) {
+		for (int i = 0; i < game.nBullets; i++) {
 		glPushMatrix();
 		glColor3ub(150,160,220);
 		w = 2;
