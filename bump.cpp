@@ -896,6 +896,41 @@ void shootDownRight()
 
 }
 
+void shootUpLeft()
+{
+//	makeParticle(game.player.pos[0], game.player.pos[1]);
+//	game.particle[game.nBullets].velocity[0] = 0; 
+//	game.particle[game.nBullets].velocity[1] = 5; 
+		if (game.nBullets >= game.maxBullets)
+		return;
+	//Particle p = game.particle[game.nBullets];
+	game.particle[game.nBullets].s.center[0] = game.player.pos[0];
+	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
+	game.particle[game.nBullets].velocity[0] = -(rnd() * 2.0); 
+	game.particle[game.nBullets].velocity[1] = (rnd() * 2.0); 
+	game.nBullets++;
+
+
+}
+
+
+void shootUpRight()
+{
+//	makeParticle(game.player.pos[0], game.player.pos[1]);
+//	game.particle[game.nBullets].velocity[0] = 0; 
+//	game.particle[game.nBullets].velocity[1] = 5; 
+		if (game.nBullets >= game.maxBullets)
+		return;
+	//Particle p = game.particle[game.nBullets];
+	game.particle[game.nBullets].s.center[0] = game.player.pos[0];
+	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
+	game.particle[game.nBullets].velocity[0] = (rnd() * 2.0); 
+	game.particle[game.nBullets].velocity[1] = (rnd() * 2.0); 
+	game.nBullets++;
+
+
+}
+
 
 void shootLeft()
 {
@@ -1039,14 +1074,31 @@ void physics(void)
 	}
 	
 	//shooting key checks
+	
+	if (game.keys[XK_Down] && game.keys[XK_Right]) {
+		shootDownRight();
+	} 
 	if (game.keys[XK_Down] && game.keys[XK_Left]) {
 		shootDownLeft();
-	} else if (game.keys[XK_Down] ) {
+	}
+	if (game.keys[XK_Up] && game.keys[XK_Left]) {
+		shootUpLeft();
+	}
+	if (game.keys[XK_Up] && game.keys[XK_Right]) {
+		shootUpRight();
+	}
+	if (game.keys[XK_Down] ) {
 		shootDown();
-	} else if (game.keys[XK_Left] ) {
+	}
+	if (game.keys[XK_Left] ) {
 		shootLeft();
 	}
-
+	if (game.keys[XK_Down] ) {
+		shootDown();
+	}
+	if (game.keys[XK_Right] ) {
+		shootRight();
+	}
 	if (game.keys[XK_Up]) {
 		shootUp();
 	}
@@ -1058,10 +1110,11 @@ void physics(void)
 	if (game.keys[XK_Left]) {
 		shootLeft();
 	}
-	*/
+	
 	if (game.keys[XK_Right]) {
 		shootRight();
 	}
+	*/
 
 	//movement key checks
 	if (game.keys[XK_a]) {
@@ -1174,11 +1227,13 @@ void physics(void)
 	}
 	//check for collision here
 	//add printf statments to help debug
-	Flt distance, pdistance, speed;
+	Flt distance, speed;
+	//Flt distance, pdistance, speed;
+
 	Flt movi[2], movj[2];
 	Flt massFactor, massi, massj;
 	Vec vcontact[2];
-	Vec pcontact[2];
+	//Vec pcontact[2];
 	Vec vmove[2];
 	Flt dot0, dot1;
 	for (int i=0; i<n-1; i++) {
@@ -1462,7 +1517,7 @@ void renderBalls(void)
 
 void render(void)
 {
-	Rect r;
+//	Rect r;
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	if(game.state == STATE_GAMEOVER) {
