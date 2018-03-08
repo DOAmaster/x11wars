@@ -1038,40 +1038,6 @@ void physics(void)
 	}
 	*/
 
-    	if (game.keys[XK_space]) {
-		struct timespec bt;
-		clock_gettime(CLOCK_REALTIME, &bt);
-		double ts = timeDiff(&game.bulletTimer, &bt);
-		if (ts > 0.1) {
-			timeCopy(&game.bulletTimer, &bt);
-			if (game.nBullets < MAX_BULLETS) {
-
-                                //shoot a bullet...
-                                //Bullet *b = new Bullet;
-                               // Bullet *b = game.barr[game.nBullets];
-                                timeCopy(&game.barr[game.nBullets].time, &bt);
-                                game.barr[game.nBullets].pos[0] = game.player.pos[0];
-                                game.barr[game.nBullets].pos[1] = game.player.pos[1];
-                                game.barr[game.nBullets].vel[0] = game.player.vel[0];
-                                game.barr[game.nBullets].vel[1] = game.player.vel[1];
-                                //convert ship angle to radians
-                                Flt rad = ((game.player.angle+90.0) / 360.0f) * PI * 2.0;
-                                //convert angle to a vector
-                                Flt xdir = cos(rad);
-                                Flt ydir = sin(rad);
-                                game.barr[game.nBullets].pos[0] += xdir*20.0f;
-                                game.barr[game.nBullets].pos[1] += ydir*20.0f;
-                                game.barr[game.nBullets].vel[0] += xdir*6.0f + rnd()*0.1;
-                                game.barr[game.nBullets].vel[1] += ydir*6.0f + rnd()*0.1;
-                                game.barr[game.nBullets].color[0] = 1.0f;
-                                game.barr[game.nBullets].color[1] = 1.0f;
-                                game.barr[game.nBullets].color[2] = 1.0f;
-                                game.nBullets++;
-
-			}
-		}
-
-	}
 	
 	//shooting key checks
 	
@@ -1102,19 +1068,7 @@ void physics(void)
 	if (game.keys[XK_Up]) {
 		shootUp();
 	}
-	/*
-	if (game.keys[XK_Down]) {
-		shootDown();
-	}
 
-	if (game.keys[XK_Left]) {
-		shootLeft();
-	}
-	
-	if (game.keys[XK_Right]) {
-		shootRight();
-	}
-	*/
 
 	//movement key checks
 	if (game.keys[XK_a]) {
@@ -1129,45 +1083,6 @@ void physics(void)
 	if (game.keys[XK_s]) {
 		moveDown();	
 	}
-
-        //
-        //Update bullet positions
-        /*
-	struct timespec bt;
-        clock_gettime(CLOCK_REALTIME, &bt);
-        int i=0;
-        while (i < game.nBullets) {
-                //Bullet *b = &g.barr[i];
-                //How long has bullet been alive?
-               // double ts = timeDiff(game.barr[game.nBullets].bulletTimer, &bt);
-               // if (ts > 2.5) {
-                        //time to delete the bullet.
-                //        memcpy(&g.barr[i], &g.barr[g.nbullets-1],
-                  //              sizeof(Bullet));
-                    //    g.nbullets--;
-                        //do not increment i.
-                      //  continue;
-                
-                //move the bullet
-                game.barr[game.nBullets].pos[0] += game.barr[game.nBullets].vel[0];
-                game.barr[game.nBullets].pos[1] += game.barr[game.nBullets].vel[1];
-                //Check for collision with window edges
-                if (game.barr[game.nBullets].pos[0] < 0.0) {
-                        game.barr[game.nBullets].pos[0] += (float)xres;
-                }
-                else if (game.barr[game.nBullets].pos[0] > (float)xres) {
-                        game.barr[game.nBullets].pos[0] -= (float)xres;
-                }
-                else if (game.barr[game.nBullets].pos[1] < 0.0) {
-                        game.barr[game.nBullets].pos[1] += (float)yres;
-                }
-                else if (game.barr[game.nBullets].pos[1] > (float)yres) {
-                        game.barr[game.nBullets].pos[1] -= (float)yres;
-                }
-                i++;
-        }
-        */
-
 
 	//Update positions
 	if (leftButtonDown) {
@@ -1326,22 +1241,26 @@ void physics(void)
 		//check if player is against winow edges show game over when too close
 		if (game.player.pos[0] < game.player.radius && game.player.vel[0] <= 0.0) {
 		//	ball[i].vel[0] = -ball[i].vel[0];
+			game.player.pos[0] = game.player.radius;
 			game.player.vel[0] = -game.player.vel[0];
-			gameOver();
+			//gameOver();
 		}
 		if (game.player.pos[0] >= (Flt)xres-game.player.radius &&
 				game.player.vel[0] >= 0.0) {
+			game.player.pos[0] = (Flt)xres-game.player.radius;
 		//	ball[i].vel[0] = -ball[i].vel[0];
-			gameOver();
+			//gameOver();
 		}
 		if (game.player.pos[1] < game.player.radius && game.player.vel[1] <= 0.0) {
 			//ball[i].vel[1] = -ball[i].vel[1];
-			gameOver();
+			game.player.pos[1] = (Flt)game.player.radius;
+			//gameOver();
 		}
 		if (game.player.pos[1] >= (Flt)yres-game.player.radius &&
 				game.player.vel[1] >= 0.0) {
 			//ball[i].vel[1] = -ball[i].vel[1];
-			gameOver();
+			game.player.pos[1] = (Flt)yres-game.player.radius;
+			//gameOver();
 		}
 
 		//BALL COLLIONS WITH WALLS
