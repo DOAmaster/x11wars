@@ -365,32 +365,26 @@ class Game {
 	int n;
 	int nBullets;
 	int maxBullets;
+	int score;
 	float moveSpeed;
-
-	Bullet *barr;
-	struct timespec bulletTimer;
 	
-
+	//texures
 	GLuint gameOverTexture;
 	GLuint titleTexture;
 
 	State state;
-
 	bool spawner;
-
-
 	unsigned char keys[65535];
 
 	Game(){
-	    	barr = new Bullet[MAX_BULLETS];
+		score = 0;
 	    	state = STATE_STARTUP;
 		spawner = false;
 		n = 0;
 		moveSpeed = 5;
-		maxBullets = 25;
+		maxBullets = 8;
 		nBullets = 0;
 	}
-	//clock_gettime(CLOCK_REALTIME, &bulletTimer);
 
 }
 game;
@@ -529,27 +523,24 @@ void init_opengl(void)
 void init_balls(void)
 {
 
-	game.player.radius = 25;
-	game.player.pos[0] = xres/2;
-	game.player.pos[1] = yres/2;
 
 	ball[0].pos[0] = 100;
 	ball[0].pos[1] = yres-150;
-	ball[0].vel[0] = 2.6;
+	ball[0].vel[0] = 0.0;
 	ball[0].vel[1] = 0.0;
 	ball[0].force[0] =
 	ball[0].force[1] = 0.0;
-	ball[0].radius = 90.0;
+	ball[0].radius = 25.0;
 	ball[0].mass = sphereVolume(ball[0].radius);
 	game.n++;
 	//
 	ball[1].pos[0] = 400;
 	ball[1].pos[1] = yres-150;
-	ball[1].vel[0] = -1.6;
+	ball[1].vel[0] = 0.0;
 	ball[1].vel[1] = 0.0;
 	ball[1].force[0] =
 	ball[1].force[1] = 0.0;
-	ball[1].radius = 90.0;
+	ball[1].radius = 25.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
 	game.n++;
 
@@ -573,144 +564,24 @@ void clearBalls(void)
 void scenario1(void)
 {
 	game.state = STATE_GAMEPLAY;
-	//
-	ball[0].pos[0] = 200;
-	ball[0].pos[1] = yres-150;
+	//top right start 
+	ball[0].pos[0] = xres - 50;
+	ball[0].pos[1] = yres - 50;
 	ball[0].vel[0] = 0.0;
 	ball[0].vel[1] = 0.0;
-	ball[0].radius = 70.0;
+	ball[0].radius = 40.0;
 	ball[0].mass = sphereVolume(ball[0].radius);
 	game.n++;
-	//
-	ball[1].pos[0] = 400;
-	ball[1].pos[1] = yres-150;
-	ball[1].vel[0] = 9.0;
-	ball[1].vel[1] = 0.0;
-	ball[1].radius = 70.0;
-	ball[1].mass = sphereVolume(ball[1].radius);
-	game.n++;
-}
-
-
-void scenario2(void)
-{
-
-	game.state = STATE_GAMEPLAY;
-        //
-	ball[0].pos[0] = xres/4-100;
-	ball[0].pos[1] = yres/2;
-	ball[0].vel[0] = 1.0;
-	ball[0].vel[1] = 0.0;
-	ball[0].radius = 25.0;
-	ball[0].mass = sphereVolume(ball[0].radius);
-	//
-	ball[1].pos[0] = 400;
-	ball[1].pos[1] = 250;
+	//bot left start
+	ball[1].pos[0] = 50;
+	ball[1].pos[1] = 50;
 	ball[1].vel[0] = 0.0;
 	ball[1].vel[1] = 0.0;
-	ball[1].radius = 25.0;
+	ball[1].radius = 40.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
-	//
-	ball[2].pos[0] = 400;
-	ball[2].pos[1] = 200;
-	ball[2].vel[0] = 0.0;
-	ball[2].vel[1] = 0.0;
-	ball[2].radius = 25.0;
-	ball[2].mass = sphereVolume(ball[2].radius);
-	//
-	ball[3].pos[0] = 400;
-	ball[3].pos[1] = 300;
-	ball[3].vel[0] = 0.0;
-	ball[3].vel[1] = 0.0;
-	ball[3].radius = 25.0;
-	ball[3].mass = sphereVolume(ball[3].radius);
-	//
-	ball[4].pos[0] = 450;
-	ball[4].pos[1] = 250;
-	ball[4].vel[0] = 0.0;
-	ball[4].vel[1] = 0.0;
-	ball[4].radius = 25.0;
-	ball[4].mass = sphereVolume(ball[4].radius);
-	//
-	ball[5].pos[0] = 450;
-	ball[5].pos[1] = 200;
-	ball[5].vel[0] = 0.0;
-	ball[5].vel[1] = 0.0;
-	ball[5].radius = 25.0;
-	ball[5].mass = sphereVolume(ball[5].radius);
-	//
-	ball[6].pos[0] = 450;
-	ball[6].pos[1] = 300;
-	ball[6].vel[0] = 0.0;
-	ball[6].vel[1] = 0.0;
-	ball[6].radius = 25.0;
-	ball[6].mass = sphereVolume(ball[6].radius);
-	//
-	ball[7].pos[0] = 500;
-	ball[7].pos[1] = 250;
-	ball[7].vel[0] = 0.0;
-	ball[7].vel[1] = 0.0;
-	ball[7].radius = 25.0;
-	ball[7].mass = sphereVolume(ball[7].radius);
-	//
-	ball[8].pos[0] = 500;
-	ball[8].pos[1] = 200;
-	ball[8].vel[0] = 0.0;
-	ball[8].vel[1] = 0.0;
-	ball[8].radius = 25.0;
-	ball[8].mass = sphereVolume(ball[8].radius);
-	//
-	ball[9].pos[0] = 500;
-	ball[9].pos[1] = 300;
-	ball[9].vel[0] = 0.0;
-	ball[9].vel[1] = 0.0;
-	ball[9].radius = 25.0;
-	ball[9].mass = sphereVolume(ball[9].radius);
-	//
-	ball[10].pos[0] = 550;
-	ball[10].pos[1] = 250;
-	ball[10].vel[0] = 0.0;
-	ball[10].vel[1] = 0.0;
-	ball[10].radius = 25.0;
-	ball[10].mass = sphereVolume(ball[10].radius);
-	//
-	ball[11].pos[0] = 550;
-	ball[11].pos[1] = 200;
-	ball[11].vel[0] = 0.0;
-	ball[11].vel[1] = 0.0;
-	ball[11].radius = 25.0;
-	ball[11].mass = sphereVolume(ball[11].radius);
-	//
-	ball[12].pos[0] = 550;
-	ball[12].pos[1] = 300;
-	ball[12].vel[0] = 0.0;
-	ball[12].vel[1] = 0.0;
-	ball[12].radius = 25.0;
-	ball[12].mass = sphereVolume(ball[12].radius);
-	//
-	ball[13].pos[0] = 600;
-	ball[13].pos[1] = 250;
-	ball[13].vel[0] = 0.0;
-	ball[13].vel[1] = 0.0;
-	ball[13].radius = 25.0;
-	ball[13].mass = sphereVolume(ball[13].radius);
-	//
-	ball[14].pos[0] = 600;
-	ball[14].pos[1] = 200;
-	ball[14].vel[0] = 0.0;
-	ball[14].vel[1] = 0.0;
-	ball[14].radius = 25.0;
-	ball[14].mass = sphereVolume(ball[14].radius);
-	/*
-	ball[15].pos[0] = 400;
-	ball[15].pos[1] = 50;
-	ball[15].vel[0] = 0.0;
-	ball[15].vel[1] = 0.0;
-	ball[15].radius = 25.0;
-	ball[15].mass = sphereVolume(ball[15].radius);
-	*/
-	
+	game.n++;
 }
+
 
 void check_resize(XEvent *e)
 {
@@ -772,12 +643,7 @@ void check_keys(XEvent *e)
 		switch(key) {
 			case XK_1:
 				//scenario
-
 				if(game.state == STATE_STARTUP) { scenario1(); }
-				break;
-			case XK_2:
-				//scenario
-				if(game.state == STATE_STARTUP) { scenario2(); }
 				break;
 			case XK_o:
 				ball[0].radius -= 1.0;
@@ -794,22 +660,6 @@ void check_keys(XEvent *e)
 			case XK_l:
 				ball[1].radius += 1.0;
 				ball[1].mass = sphereVolume(ball[1].radius);
-				break;
-			case XK_a:
-				//ball[0].vel[0] -= 1.0;
-				//moveLeft();
-				break;
-			case XK_d:
-				//moveRight();
-				//ball[0].vel[0] += 1.0;
-				break;
-			case XK_w:
-				//moveUp();
-				//ball[0].vel[1] += 1.0;
-				break;
-			case XK_s:
-				//moveDown();
-				//ball[0].vel[1] -= 1.0;
 				break;
 			case XK_m:
 				//press s to slow the balls
@@ -1039,16 +889,7 @@ void killBall(void)
 }
 
 void physics(void)
-{
-	/*
-	if (game.state == STATE_GAMEOVER){
-		if(game.keys[XK_C]) {
-			game.state = STATE_STARTUP; 
-		}
-	}
-	*/
-
-	
+{	
 	//shooting key checks
 	
 	if (game.keys[XK_Down] && game.keys[XK_Right]) {
@@ -1218,16 +1059,6 @@ void physics(void)
 		game.particle[i].s.center[0] += game.particle[i].velocity[0] * 5;
 		game.particle[i].s.center[1] += game.particle[i].velocity[1] * 5;
 
-		//check for bullets hitting other stuff
-		/*
-		for (int j = 0; j < game.maxEnemy1; j++) {
-			if(game.particle[i].center[1] < game.enemy1.center[1]
-			 + game.enemy1.height && game.enemy1.center[0] - game.enemy1.width) {
-				
-				game.partical[i].velocity[2] = -game.particle[i].velocity[2];
-				}
-		}
-		*/
 
 		//check off screen bullets
 		if(game.particle[i].s.center[1] < 0.0 || game.particle[i].s.center[1] > yres) {
@@ -1238,6 +1069,13 @@ void physics(void)
 			game.particle[i] = game.particle[game.nBullets-1];
 			game.nBullets--;
 		}
+		//check for slow bullets no working
+		/*
+		if(game.particle[i].velocity[0] < .1 && game.particle[i].velocity[1] < .1) {	
+			game.particle[i] = game.particle[game.nBullets-1];
+			game.nBullets--;
+		}
+		*/
 
 
 		for (int i2=0; i2<game.n; i2++) {
@@ -1245,6 +1083,8 @@ void physics(void)
 		//BALL COLLIONS WITH BULLETS
 		//
 		//check balls against bullets
+		//
+		//finds position of particle postion against the balls
 		Flt newx = game.particle[i].s.center[0] - ball[i2].pos[0];
 		Flt newy = game.particle[i].s.center[1] - ball[i2].pos[1];
 		if (pow(newx,2) + pow(newy, 2) < pow(ball[i2].radius,2)) {
@@ -1256,39 +1096,7 @@ void physics(void)
 				game.n--;
 			}
 		}
-		/*
-		if (game.particle[i].s.center[0] >= (Flt)xres-ball[i2].radius &&
-				ball[i2].vel[0] >= 0.0) {
-		//	ball[i2].vel[0] = -ball[i2].vel[0];
-			playSound(1);
-			
-			printf("second if hit\n");
-			if (game.n > 0) {
-				ball[i2] = ball[game.n-1];
-				game.n--;
-			}
-		}
-		if (game.particle[i].s.center[1] < ball[i2].radius && ball[i2].vel[1] <= 0.0) {
-		//	ball[i2].vel[1] = -ball[i2].vel[1];
-			playSound(1);
 
-			if (game.n > 0) {
-				ball[i2] = ball[game.n-1];
-				game.n--;
-			}
-		}
-		if (game.particle[i].s.center[1] >= (Flt)yres-ball[i2].radius &&
-				ball[i2].vel[1] >= 0.0) {
-		//	ball[i2].vel[1] = -ball[i2].vel[1];
-			playSound(1);
-
-			if (game.n > 0) {
-				ball[i2] = ball[game.n-1];
-				game.n--;
-			}
-			//gameOver();
-		}
-		*/
 	}
 
 
@@ -1324,6 +1132,29 @@ void physics(void)
 
 	//Check for collision with window edges with player and balls
 	for (int i=0; i<game.n; i++) {
+		
+		//check balls for player
+		//
+		//finds position of player postion against the balls
+		//TODO fix sphere on sphere collision
+		////
+		Flt newx = game.player.pos[0] - ball[i].pos[0];
+		Flt newy = game.player.pos[1] - ball[i].pos[1];
+		if (pow(newx,2) + pow(newy, 2) < pow(ball[i].radius,2)) {
+			
+			//playSound(1);
+		//	printf("Player hit ball\n");
+			gameOver();
+
+			/*
+			if (game.n > 0) {
+				ball[i2] = ball[game.n-1];
+				game.n--;
+			}
+			*/
+		}
+
+	
 
 		//BALL COLLIONS WITH WALLS
 		//
@@ -1560,6 +1391,10 @@ void render(void)
 	}
 	if(game.state == STATE_STARTUP) {
 
+
+		game.player.radius = 25;
+		game.player.pos[0] = xres/2;
+		game.player.pos[1] = yres/2;
 
 		glColor3ub(255,255,255);
 		//show title menu texture
