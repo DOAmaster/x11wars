@@ -382,7 +382,7 @@ class Game {
 		spawner = false;
 		n = 0;
 		moveSpeed = 5;
-		maxBullets = 8;
+		maxBullets = 10;
 		nBullets = 0;
 	}
 
@@ -820,34 +820,13 @@ void shootRight()
 
 }
 
-void moveLeft()
-{
+void moveLeft() { game.player.pos[0] -= game.moveSpeed; }
 
-	game.player.pos[0] -= game.moveSpeed;
+void moveRight() { game.player.pos[0] += game.moveSpeed; }
 
+void moveUp() { game.player.pos[1] += game.moveSpeed; }
 
-}
-
-void moveRight()
-{
-		
-	game.player.pos[0] += game.moveSpeed;
-
-}
-
-void moveUp()
-{
-
-	game.player.pos[1] += game.moveSpeed;
-
-}
-
-void moveDown()
-{
-	
-	game.player.pos[1] -= game.moveSpeed;
-
-}
+void moveDown() { game.player.pos[1] -= game.moveSpeed; }
 
 
 void VecNormalize(Vec v)
@@ -935,7 +914,7 @@ void physics(void)
 		moveDown();	
 	}
 
-	//Update positions
+	//Update positions mouse ball movement for debuging
 	if (leftButtonDown) {
 		//Special physics applied here.
 		//Physics employs a penalty system.
@@ -992,7 +971,6 @@ void physics(void)
 		ball[i].pos[1] += ball[i].vel[1];
 	}
 	//check for collision here
-	//add printf statments to help debug
 	Flt distance, speed;
 	//Flt distance, pdistance, speed;
 
@@ -1078,11 +1056,9 @@ void physics(void)
 		*/
 
 
+		//BULLET COLLIONS WITH BALL
 		for (int i2=0; i2<game.n; i2++) {
 
-		//BALL COLLIONS WITH BULLETS
-		//
-		//check balls against bullets
 		//
 		//finds position of particle postion against the balls
 		Flt newx = game.particle[i].s.center[0] - ball[i2].pos[0];
@@ -1090,11 +1066,15 @@ void physics(void)
 		if (pow(newx,2) + pow(newy, 2) < pow(ball[i2].radius,2)) {
 		//	ball[i2].vel[0] = -ball[i2].vel[0];
 			playSound(1);
-			printf("fist if hit\n");
+			//printf("ball[%i] hit \n", i2);
+			//remove ball that was hit
 			if (game.n > 0) {
 				ball[i2] = ball[game.n-1];
 				game.n--;
 			}
+			//remove bullet that was hit with ball
+			game.particle[i] = game.particle[game.nBullets-1];
+			game.nBullets--;
 		}
 
 	}
@@ -1391,7 +1371,7 @@ void render(void)
 	}
 	if(game.state == STATE_STARTUP) {
 
-
+		//setup player center pos
 		game.player.radius = 25;
 		game.player.pos[0] = xres/2;
 		game.player.pos[1] = yres/2;
@@ -1417,10 +1397,8 @@ void render(void)
 		
 		ggprint8b(&r, 16, 0x0000000, "x11 Wars");
 		ggprint8b(&r, 16, 0x0000000, "WSAD to move");
-	//	ggprint8b(&r, 16, 0x0000000, "M - Slow down movement");
-	//	ggprint8b(&r, 16, 0x0000000, "hold down o, i, k, l");
+		ggprint8b(&r, 16, 0x0000000, "ARROWS to shoot");
 		ggprint8b(&r, 16, 0x0000000, "1 - Normal");
-		ggprint8b(&r, 16, 0x0000000, "2 - Hard");
 		ggprint8b(&r, 16, 0x0000000, "ESC - Pause");
 		ggprint8b(&r, 16, 0x0000000, "P - Quit");
 		*/
