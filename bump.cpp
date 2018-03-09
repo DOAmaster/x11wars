@@ -334,7 +334,6 @@ public:
 	float radius;
 	float mass;
 } ball[15];
-const int n=15;
 
 
 class Player {
@@ -542,6 +541,7 @@ void init_balls(void)
 	ball[0].force[1] = 0.0;
 	ball[0].radius = 90.0;
 	ball[0].mass = sphereVolume(ball[0].radius);
+	game.n++;
 	//
 	ball[1].pos[0] = 400;
 	ball[1].pos[1] = yres-150;
@@ -551,18 +551,20 @@ void init_balls(void)
 	ball[1].force[1] = 0.0;
 	ball[1].radius = 90.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
+	game.n++;
 
 }
 
 void clearBalls(void)
 {
-	for( int i; i < 16; i++) {
+	for( int i; i < game.n; i++) {
 		ball[i].pos[0] = 200;
 		ball[i].pos[1] = yres-150;
 		ball[i].vel[0] = 0.0;
 		ball[i].vel[1] = 0.0;
 		ball[i].radius = 70.0;
 		ball[i].mass = sphereVolume(ball[i].radius);
+		game.n--;
 	}
 
 
@@ -578,6 +580,7 @@ void scenario1(void)
 	ball[0].vel[1] = 0.0;
 	ball[0].radius = 70.0;
 	ball[0].mass = sphereVolume(ball[0].radius);
+	game.n++;
 	//
 	ball[1].pos[0] = 400;
 	ball[1].pos[1] = yres-150;
@@ -585,6 +588,7 @@ void scenario1(void)
 	ball[1].vel[1] = 0.0;
 	ball[1].radius = 70.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
+	game.n++;
 }
 
 
@@ -1028,6 +1032,12 @@ void gameOver(void)
 
 }
 
+void killBall(void)
+{
+
+
+}
+
 void physics(void)
 {
 	/*
@@ -1136,7 +1146,7 @@ void physics(void)
 	}
 	//Different physics applied here...
 	//100% elastic collisions. 
-	for (int i=0; i<n; i++) {
+	for (int i=0; i<game.n; i++) {
 		ball[i].pos[0] += ball[i].vel[0];
 		ball[i].pos[1] += ball[i].vel[1];
 	}
@@ -1151,8 +1161,8 @@ void physics(void)
 	//Vec pcontact[2];
 	Vec vmove[2];
 	Flt dot0, dot1;
-	for (int i=0; i<n-1; i++) {
-		for (int j=i+1; j<n; j++) {
+	for (int i=0; i<game.n-1; i++) {
+		for (int j=i+1; j<game.n; j++) {
 			//vx = ball[i].pos[0] - ball[j].pos[0];
 			//vy = ball[i].pos[1] - ball[j].pos[1];
 			vcontact[0][0] = ball[i].pos[0] - ball[j].pos[0];
@@ -1229,12 +1239,60 @@ void physics(void)
 			game.nBullets--;
 		}
 
+
+		for (int i2=0; i2<game.n; i2++) {
+
+		//BALL COLLIONS WITH BULLETS
+		//
+		//check balls against bullets
+		Flt newx = game.particle[i].s.center[0] - ball[i2].pos[0];
+		Flt newy = game.particle[i].s.center[1] - ball[i2].pos[1];
+		if (pow(newx,2) + pow(newy, 2) < pow(ball[i2].radius,2)) {
+		//	ball[i2].vel[0] = -ball[i2].vel[0];
+			playSound(1);
+			printf("fist if hit\n");
+			if (game.n > 0) {
+				ball[i2] = ball[game.n-1];
+				game.n--;
+			}
+		}
+		/*
+		if (game.particle[i].s.center[0] >= (Flt)xres-ball[i2].radius &&
+				ball[i2].vel[0] >= 0.0) {
+		//	ball[i2].vel[0] = -ball[i2].vel[0];
+			playSound(1);
+			
+			printf("second if hit\n");
+			if (game.n > 0) {
+				ball[i2] = ball[game.n-1];
+				game.n--;
+			}
+		}
+		if (game.particle[i].s.center[1] < ball[i2].radius && ball[i2].vel[1] <= 0.0) {
+		//	ball[i2].vel[1] = -ball[i2].vel[1];
+			playSound(1);
+
+			if (game.n > 0) {
+				ball[i2] = ball[game.n-1];
+				game.n--;
+			}
+		}
+		if (game.particle[i].s.center[1] >= (Flt)yres-ball[i2].radius &&
+				ball[i2].vel[1] >= 0.0) {
+		//	ball[i2].vel[1] = -ball[i2].vel[1];
+			playSound(1);
+
+			if (game.n > 0) {
+				ball[i2] = ball[game.n-1];
+				game.n--;
+			}
+			//gameOver();
+		}
+		*/
 	}
 
 
-
-	//Check for collision with window edges with player and balls
-	for (int i=0; i<n; i++) {
+	}
 
 		//PLAYER COLLIONS WITH WALLS
 		//
@@ -1262,6 +1320,10 @@ void physics(void)
 			game.player.pos[1] = (Flt)yres-game.player.radius;
 			//gameOver();
 		}
+
+
+	//Check for collision with window edges with player and balls
+	for (int i=0; i<game.n; i++) {
 
 		//BALL COLLIONS WITH WALLS
 		//
@@ -1510,6 +1572,7 @@ void render(void)
 		glEnd();
 	
 
+		clearBalls();
 
 		/*
 		//show text box
