@@ -546,6 +546,26 @@ void init_balls(void)
 
 }
 
+
+void clearBullets(void)
+{
+	for( int i = 0; i < game.nBullets; i++) {
+	//	ball[i].pos[0] = 200;
+	//	ball[i].pos[1] = yres-150;
+	//	ball[i].vel[0] = 0.0;
+	//	ball[i].vel[1] = 0.0;
+	//	ball[i].radius = 70.0;
+	//	ball[i].mass = sphereVolume(ball[i].radius);
+		game.particle[i].s.width = 0;
+		game.particle[i].s.height = 0;
+		game.particle[i].s.radius = 0;
+
+		game.nBullets--;
+	}
+
+
+}
+
 void clearBalls(void)
 {
 	for( int i; i < game.n; i++) {
@@ -1387,6 +1407,7 @@ void render(void)
 		glEnd();
 	
 
+		clearBullets();
 		clearBalls();
 
 		/*
