@@ -703,9 +703,6 @@ void check_keys(XEvent *e)
 #define rnd() (float)rand() / (float)RAND_MAX
 void shootUp()
 {
-//	makeParticle(game.player.pos[0], game.player.pos[1]);
-//	game.particle[game.nBullets].velocity[0] = 0; 
-//	game.particle[game.nBullets].velocity[1] = 5; 
 		if (game.nBullets >= game.maxBullets)
 		return;
 	//Particle p = game.particle[game.nBullets];
@@ -720,9 +717,6 @@ void shootUp()
 
 void shootDown()
 {
-//	makeParticle(game.player.pos[0], game.player.pos[1]);
-//	game.particle[game.nBullets].velocity[0] = 0; 
-//	game.particle[game.nBullets].velocity[1] = 5; 
 		if (game.nBullets >= game.maxBullets)
 		return;
 	//Particle p = game.particle[game.nBullets];
@@ -738,9 +732,6 @@ void shootDown()
 
 void shootDownLeft()
 {
-//	makeParticle(game.player.pos[0], game.player.pos[1]);
-//	game.particle[game.nBullets].velocity[0] = 0; 
-//	game.particle[game.nBullets].velocity[1] = 5; 
 		if (game.nBullets >= game.maxBullets)
 		return;
 	//Particle p = game.particle[game.nBullets];
@@ -755,9 +746,6 @@ void shootDownLeft()
 
 void shootDownRight()
 {
-//	makeParticle(game.player.pos[0], game.player.pos[1]);
-//	game.particle[game.nBullets].velocity[0] = 0; 
-//	game.particle[game.nBullets].velocity[1] = 5; 
 		if (game.nBullets >= game.maxBullets)
 		return;
 	//Particle p = game.particle[game.nBullets];
@@ -772,9 +760,6 @@ void shootDownRight()
 
 void shootUpLeft()
 {
-//	makeParticle(game.player.pos[0], game.player.pos[1]);
-//	game.particle[game.nBullets].velocity[0] = 0; 
-//	game.particle[game.nBullets].velocity[1] = 5; 
 		if (game.nBullets >= game.maxBullets)
 		return;
 	//Particle p = game.particle[game.nBullets];
@@ -790,9 +775,6 @@ void shootUpLeft()
 
 void shootUpRight()
 {
-//	makeParticle(game.player.pos[0], game.player.pos[1]);
-//	game.particle[game.nBullets].velocity[0] = 0; 
-//	game.particle[game.nBullets].velocity[1] = 5; 
 		if (game.nBullets >= game.maxBullets)
 		return;
 	//Particle p = game.particle[game.nBullets];
@@ -808,9 +790,6 @@ void shootUpRight()
 
 void shootLeft()
 {
-//	makeParticle(game.player.pos[0], game.player.pos[1]);
-//	game.particle[game.nBullets].velocity[0] = 0; 
-//	game.particle[game.nBullets].velocity[1] = 5; 
 		if (game.nBullets >= game.maxBullets)
 		return;
 	//Particle p = game.particle[game.nBullets];
@@ -825,9 +804,6 @@ void shootLeft()
 
 void shootRight()
 {
-//	makeParticle(game.player.pos[0], game.player.pos[1]);
-//	game.particle[game.nBullets].velocity[0] = 0; 
-//	game.particle[game.nBullets].velocity[1] = 5; 
 		if (game.nBullets >= game.maxBullets)
 		return;
 	//Particle p = game.particle[game.nBullets];
@@ -935,6 +911,7 @@ void physics(void)
 	}
 
 	//Update positions mouse ball movement for debuging
+	/*
 	if (leftButtonDown) {
 		//Special physics applied here.
 		//Physics employs a penalty system.
@@ -984,6 +961,8 @@ void physics(void)
 		}
 		return;
 	}
+	*/
+
 	//Different physics applied here...
 	//100% elastic collisions. 
 	for (int i=0; i<game.n; i++) {
@@ -1086,12 +1065,18 @@ void physics(void)
 		if (pow(newx,2) + pow(newy, 2) < pow(ball[i2].radius,2)) {
 		//	ball[i2].vel[0] = -ball[i2].vel[0];
 			playSound(1);
-			//printf("ball[%i] hit \n", i2);
+			printf("ball[%i] hit \n", i2);
 			//remove ball that was hit
-			if (game.n > 0) {
-				ball[i2] = ball[game.n-1];
+		//	if (game.n > 0) {
+				ball[i2] = ball[game.n];
 				game.n--;
-			}
+		//	}
+		//	else if (game.n == 1) {
+
+		//		printf("last ball[%i] hit \n", i2);
+		//		ball[i2] = ball[game.n];
+		//		game.n--;
+		//	}
 			//remove bullet that was hit with ball
 			game.particle[i] = game.particle[game.nBullets-1];
 			game.nBullets--;
