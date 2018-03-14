@@ -1144,7 +1144,7 @@ void physics(void)
 		////
 		Flt newx = game.player.pos[0] - ball[i].pos[0];
 		Flt newy = game.player.pos[1] - ball[i].pos[1];
-		if (pow(newx,2) * pow(newy, 2) < pow(ball[i].radius,2)) {
+		if (pow(newx,2) + pow(newy, 2) < pow(ball[i].radius,2)) {
 			
 			//playSound(1);
 		//	printf("Player hit ball\n");
