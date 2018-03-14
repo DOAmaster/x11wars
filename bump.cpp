@@ -333,6 +333,7 @@ public:
 	Vec force;
 	float radius;
 	float mass;
+	float angle;
 } ball[15];
 
 
@@ -816,13 +817,31 @@ void shootRight()
 
 }
 
-void moveLeft() { game.player.pos[0] -= game.moveSpeed; }
+void moveLeft() 
+{ 
+    game.player.pos[0] -= game.moveSpeed;
+    game.player.angle = 270;
+}
 
-void moveRight() { game.player.pos[0] += game.moveSpeed; }
+void moveRight()
+{
+    game.player.pos[0] += game.moveSpeed;
+    game.player.angle = 90; 
+}
 
-void moveUp() { game.player.pos[1] += game.moveSpeed; }
+void moveUp() 
+{ 
+    game.player.pos[1] += game.moveSpeed;
+    game.player.angle = 360;
 
-void moveDown() { game.player.pos[1] -= game.moveSpeed; }
+}
+
+void moveDown() 
+{ 
+    game.player.pos[1] -= game.moveSpeed;
+    game.player.angle = 180;
+
+}
 
 
 void VecNormalize(Vec v)
@@ -1125,7 +1144,7 @@ void physics(void)
 		////
 		Flt newx = game.player.pos[0] - ball[i].pos[0];
 		Flt newy = game.player.pos[1] - ball[i].pos[1];
-		if (pow(newx,2) + pow(newy, 2) < pow(ball[i].radius,2)) {
+		if (pow(newx,2) * pow(newy, 2) < pow(ball[i].radius,2)) {
 			
 			//playSound(1);
 		//	printf("Player hit ball\n");
@@ -1148,8 +1167,7 @@ void physics(void)
 			ball[i].vel[0] = -ball[i].vel[0];
 			playSound(1);
 		}
-		if (ball[i].pos[0] >= (Flt)xres-ball[i].radius &&
-				ball[i].vel[0] >= 0.0) {
+		if (ball[i].pos[0] >= (Flt)xres-ball[i].radius && ball[i].vel[0] >= 0.0) {
 			ball[i].vel[0] = -ball[i].vel[0];
 			playSound(1);
 		}
@@ -1157,12 +1175,31 @@ void physics(void)
 			ball[i].vel[1] = -ball[i].vel[1];
 			playSound(1);
 		}
-		if (ball[i].pos[1] >= (Flt)yres-ball[i].radius &&
-				ball[i].vel[1] >= 0.0) {
+		if (ball[i].pos[1] >= (Flt)yres-ball[i].radius && ball[i].vel[1] >= 0.0) {
 			ball[i].vel[1] = -ball[i].vel[1];
 			playSound(1);
 		}
+
+		//update ball pos to chase player
+		ball[i].angle = game.player.angle;
+
+		Flt newposx = game.player.pos[0];
+		Flt newposy = game.player.pos[1];
+
+		//ball[i].pos[0] = newposx;
+		//ball[i].pos[1] = newposy;
+	
+
+		if (ball[i].vel[0] < .5 && ball[i].vel[1] < .5) {
+			ball[i].vel[0] = .6;
+			ball[i].vel[1] = .6;
+		}
+
+
 	}
+
+	//update ball pos to chase player
+	
 }
 
 void drawBall(Flt rad)
