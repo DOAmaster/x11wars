@@ -985,8 +985,20 @@ void physics(void)
 	//Different physics applied here...
 	//100% elastic collisions. 
 	for (int i=0; i<game.n; i++) {
-		ball[i].pos[0] += ball[i].vel[0];
-		ball[i].pos[1] += ball[i].vel[1];
+
+
+		//TODO fix the chase logic
+		//update ball pos to chase player
+		Flt playerPosX = game.player.pos[0];
+		Flt playerPosY = game.player.pos[1];
+	
+
+		ball[i].angle = playerPosX / playerPosY;
+		ball[i].vel[0] = .6;
+		ball[i].vel[1] = .6;
+
+		ball[i].pos[0] += ball[i].vel[0]/ball[i].angle;
+		ball[i].pos[1] += ball[i].vel[1]/ball[i].angle;
 	}
 	//check for collision here
 	Flt distance, speed;
@@ -1198,8 +1210,8 @@ void physics(void)
 
 	}
 
-	//update ball pos to chase player
-	
+
+
 }
 
 void drawBall(Flt rad)
