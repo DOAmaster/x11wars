@@ -1154,11 +1154,15 @@ void physics(void)
 		if (pow(newx,2) + pow(newy, 2) < pow(ball[i2].radius,2)) {
 		//	ball[i2].vel[0] = -ball[i2].vel[0];
 			playSound(1);
-			printf("ball[%i] hit \n", i2);
+			printf("ball[%i] hit sending off screen \n", i2);
 			//remove ball that was hit
+			ball[i2].pos[0] = 900;
+			ball[i2].pos[1] = 700;
+			ball[i2].vel[0] = 0;
+			ball[i2].vel[1] = 0;
 		//	if (game.n > 0) {
-				ball[i2] = ball[game.n];
-				game.n--;
+			//	ball[i2] = ball[game.n];
+			//	game.n--;
 		//	}
 		//	else if (game.n == 1) {
 
@@ -1269,11 +1273,50 @@ void physics(void)
 		if (ball[i].pos[0] == 900 && ball[i].pos[1] == 700) {
 			
 			//shoots reserves to the right middle
-			printf("repositioned reserved ball\n");
-			ball[i].pos[0] = 0;
-			ball[i].pos[1] = yres/2;
-			ball[i].vel[0] = 2;
-			ball[i].vel[1] = 0;
+		//	printf("repositioned reserved ball\n");
+		//
+		//gives random number from 0 - 4
+		int randomPOS = rand()%3;
+		printf("%d = randomPOS\n", randomPOS);
+
+		switch (randomPOS)
+		{
+			//spawn top left
+			case 0:
+				ball[i].pos[0] = 0 + ball[i].radius;
+				ball[i].pos[1] = 0 + ball[i].radius;
+				ball[i].vel[0] = 2;
+				ball[i].vel[1] = 0;
+			break;
+			
+			//spawn top right
+			case 1:
+				ball[i].pos[0] = xres - ball[i].radius;
+				ball[i].pos[1] = yres - ball[i].radius;
+				ball[i].vel[0] = -2;
+				ball[i].vel[1] = 0;
+			break;
+			//spawn bottom left
+			case 2:
+				ball[i].pos[0] = 0 - ball[i].radius;
+				ball[i].pos[1] = yres - ball[i].radius;
+				ball[i].vel[0] = 2;
+				ball[i].vel[1] = 0;
+			break;
+			//spawn bottom right
+			case 3:
+				ball[i].pos[0] = xres - ball[i].radius;
+				ball[i].pos[1] = 0 + ball[i].radius;
+				ball[i].vel[0] = -2;
+				ball[i].vel[1] = 0;
+			break;
+
+		}
+			
+//			ball[i].pos[0] = 0;
+//			ball[i].pos[1] = yres/2;
+//			ball[i].vel[0] = 2;
+//			ball[i].vel[1] = 0;
 
 		}
 
