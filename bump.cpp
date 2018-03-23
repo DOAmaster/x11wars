@@ -989,16 +989,16 @@ void physics(void)
 
 		//TODO fix the chase logic
 		//update ball pos to chase player
-		Flt playerPosX = game.player.pos[0];
-		Flt playerPosY = game.player.pos[1];
+	//	Flt playerPosX = game.player.pos[0];
+	//	Flt playerPosY = game.player.pos[1];
 	
 
-		ball[i].angle = playerPosX / playerPosY;
-		ball[i].vel[0] = .6;
-		ball[i].vel[1] = .6;
+	//	ball[i].angle = playerPosX / playerPosY;
+	//	ball[i].vel[0] = .6;
+	//	ball[i].vel[1] = .6;
 
-		ball[i].pos[0] += ball[i].vel[0]/ball[i].angle;
-		ball[i].pos[1] += ball[i].vel[1]/ball[i].angle;
+		ball[i].pos[0] += ball[i].vel[0];
+		ball[i].pos[1] += ball[i].vel[1];
 	}
 	//check for collision here
 	Flt distance, speed;
@@ -1058,6 +1058,64 @@ void physics(void)
 			}
 		}
 	}
+
+	bool hit = false;
+
+	//check off screen balls
+	for (int i=0; i<game.n; i++) {
+		//BALL COLLIONS WITH WALLS
+		//
+		//check balls against window edges
+		if (ball[i].pos[0] < ball[i].radius && ball[i].vel[0] <= 0.0) {
+			ball[i].vel[0] = -ball[i].vel[0];
+			printf("ball hit edge\n");
+			hit = true;
+				//ball[i] = ball[game.n];
+			//	game.n--;
+			playSound(1);
+		}
+		if (ball[i].pos[0] >= (Flt)xres-ball[i].radius && ball[i].vel[0] >= 0.0) {
+			ball[i].vel[0] = -ball[i].vel[0];
+			printf("ball hit edge\n");
+			hit = true;
+			//	ball[i] = ball[game.n];
+			//	game.n--;
+			//printf("ball hit edge\n");
+			playSound(1);
+		}
+		if (ball[i].pos[1] < ball[i].radius && ball[i].vel[1] <= 0.0) {
+			ball[i].vel[1] = -ball[i].vel[1];
+			printf("ball hit edge\n");
+			hit = true;
+			//	ball[i] = ball[game.n];
+			//	game.n--;
+			//printf("ball hit edge\n");
+			playSound(1);
+		}
+		if (ball[i].pos[1] >= (Flt)yres-ball[i].radius && ball[i].vel[1] >= 0.0) {
+			ball[i].vel[1] = -ball[i].vel[1];
+			printf("ball hit edge\n");
+			hit = true;
+			//	ball[i] = ball[game.n];
+			//	game.n--;		
+		//	printf("ball hit edge\n");
+			playSound(1);
+		}
+
+		if(hit) {
+		//	ball[i] = ball[game.n-1];
+			ball[i].pos[0] = 900;
+			ball[i].pos[1] = 700;
+			printf("moving ball off screen\n");
+			hit = false;
+			
+		}
+		
+
+	}
+
+
+
 
 	//render bullet particles
 	for (int i=0; i < game.nBullets; i++) { 
@@ -1177,19 +1235,46 @@ void physics(void)
 		//check balls against window edges
 		if (ball[i].pos[0] < ball[i].radius && ball[i].vel[0] <= 0.0) {
 			ball[i].vel[0] = -ball[i].vel[0];
+			//printf("ball hit edge removing\n");
+			//	ball[i] = ball[game.n];
+			//	game.n--;
 			playSound(1);
 		}
 		if (ball[i].pos[0] >= (Flt)xres-ball[i].radius && ball[i].vel[0] >= 0.0) {
 			ball[i].vel[0] = -ball[i].vel[0];
+		//	printf("ball hit edge removing\n");
+		//		ball[i] = ball[game.n];
+		//		game.n--;
+			//printf("ball hit edge\n");
 			playSound(1);
 		}
 		if (ball[i].pos[1] < ball[i].radius && ball[i].vel[1] <= 0.0) {
 			ball[i].vel[1] = -ball[i].vel[1];
+		//	printf("ball hit edge removing\n");
+		//		ball[i] = ball[game.n];
+		//		game.n--;
+			//printf("ball hit edge\n");
 			playSound(1);
 		}
 		if (ball[i].pos[1] >= (Flt)yres-ball[i].radius && ball[i].vel[1] >= 0.0) {
 			ball[i].vel[1] = -ball[i].vel[1];
+		//		printf("ball hit edge removing\n");
+		//		ball[i] = ball[game.n];
+		//		game.n--;		
+		//	printf("ball hit edge\n");
 			playSound(1);
+		}
+
+		//check of ball is in off screen reserve
+		if (ball[i].pos[0] == 900 && ball[i].pos[1] == 700) {
+			
+			//shoots reserves to the right middle
+			printf("repositioned reserved ball\n");
+			ball[i].pos[0] = 0;
+			ball[i].pos[1] = yres/2;
+			ball[i].vel[0] = 2;
+			ball[i].vel[1] = 0;
+
 		}
 
 		//update ball pos to chase player
