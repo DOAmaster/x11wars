@@ -1065,25 +1065,35 @@ void physics(void)
 	for (int i=0; i<game.n; i++) {
 		//BALL COLLIONS WITH WALLS
 		//
+		//
+		//ball[i].pos[0] == 900 && ball[i].pos[1] == 700
 		//check balls against window edges
 		if (ball[i].pos[0] < ball[i].radius && ball[i].vel[0] <= 0.0) {
-			ball[i].vel[0] = -ball[i].vel[0];
-			printf("ball hit edge\n");
-			hit = true;
+			//check of not in reserve pile
+			if (ball[i].pos[0] != 900 && ball[i].pos[1] != 700) {
+				ball[i].vel[0] = -ball[i].vel[0];
+				printf("ball hit edge\n");
+				hit = true;
 				//ball[i] = ball[game.n];
-			//	game.n--;
-			playSound(1);
+				//	game.n--;
+				playSound(1);
+			}
 		}
 		if (ball[i].pos[0] >= (Flt)xres-ball[i].radius && ball[i].vel[0] >= 0.0) {
-			ball[i].vel[0] = -ball[i].vel[0];
-			printf("ball hit edge\n");
-			hit = true;
-			//	ball[i] = ball[game.n];
-			//	game.n--;
-			//printf("ball hit edge\n");
-			playSound(1);
+
+			if (ball[i].pos[0] != 900 && ball[i].pos[1] != 700) {
+				ball[i].vel[0] = -ball[i].vel[0];
+				printf("ball hit edge\n");
+				hit = true;
+				//	ball[i] = ball[game.n];
+				//	game.n--;
+				//printf("ball hit edge\n");
+				playSound(1);
+			}
 		}
 		if (ball[i].pos[1] < ball[i].radius && ball[i].vel[1] <= 0.0) {
+
+			if (ball[i].pos[1] != 700 && ball[i].pos[0] != 900) {
 			ball[i].vel[1] = -ball[i].vel[1];
 			printf("ball hit edge\n");
 			hit = true;
@@ -1091,27 +1101,33 @@ void physics(void)
 			//	game.n--;
 			//printf("ball hit edge\n");
 			playSound(1);
+			}
 		}
 		if (ball[i].pos[1] >= (Flt)yres-ball[i].radius && ball[i].vel[1] >= 0.0) {
-			ball[i].vel[1] = -ball[i].vel[1];
-			printf("ball hit edge\n");
-			hit = true;
+		
+			if (ball[i].pos[1] != 700 && ball[i].pos[0] != 900) {
+				ball[i].vel[1] = -ball[i].vel[1];
+				printf("ball hit edge\n");
+				hit = true;
 			//	ball[i] = ball[game.n];
 			//	game.n--;		
-		//	printf("ball hit edge\n");
-			playSound(1);
+			//	printf("ball hit edge\n");
+				playSound(1);
 		}
 
 		if(hit) {
 		//	ball[i] = ball[game.n-1];
 			ball[i].pos[0] = 900;
 			ball[i].pos[1] = 700;
+			ball[i].vel[0] = 0;
+			ball[i].vel[1] = 0;
 			printf("moving ball off screen\n");
 			hit = false;
 			
 		}
 		
 
+	}
 	}
 
 
@@ -1238,14 +1254,14 @@ void physics(void)
 		//
 		//check balls against window edges
 		if (ball[i].pos[0] < ball[i].radius && ball[i].vel[0] <= 0.0) {
-			ball[i].vel[0] = -ball[i].vel[0];
+			//ball[i].vel[0] = -ball[i].vel[0];
 			//printf("ball hit edge removing\n");
 			//	ball[i] = ball[game.n];
 			//	game.n--;
 			playSound(1);
 		}
 		if (ball[i].pos[0] >= (Flt)xres-ball[i].radius && ball[i].vel[0] >= 0.0) {
-			ball[i].vel[0] = -ball[i].vel[0];
+		//	ball[i].vel[0] = -ball[i].vel[0];
 		//	printf("ball hit edge removing\n");
 		//		ball[i] = ball[game.n];
 		//		game.n--;
@@ -1253,7 +1269,7 @@ void physics(void)
 			playSound(1);
 		}
 		if (ball[i].pos[1] < ball[i].radius && ball[i].vel[1] <= 0.0) {
-			ball[i].vel[1] = -ball[i].vel[1];
+		//	ball[i].vel[1] = -ball[i].vel[1];
 		//	printf("ball hit edge removing\n");
 		//		ball[i] = ball[game.n];
 		//		game.n--;
@@ -1261,7 +1277,7 @@ void physics(void)
 			playSound(1);
 		}
 		if (ball[i].pos[1] >= (Flt)yres-ball[i].radius && ball[i].vel[1] >= 0.0) {
-			ball[i].vel[1] = -ball[i].vel[1];
+		//	ball[i].vel[1] = -ball[i].vel[1];
 		//		printf("ball hit edge removing\n");
 		//		ball[i] = ball[game.n];
 		//		game.n--;		
@@ -1269,6 +1285,7 @@ void physics(void)
 			playSound(1);
 		}
 
+		//IF ball is off screen in reserve, send it to the screen
 		//check of ball is in off screen reserve
 		if (ball[i].pos[0] == 900 && ball[i].pos[1] == 700) {
 			
@@ -1277,29 +1294,33 @@ void physics(void)
 		//
 		//gives random number from 0 - 4
 		int randomPOS = rand()%3;
+		//debugging
+		//randomPOS = 3;
 		printf("%d = randomPOS\n", randomPOS);
+		
 
 		switch (randomPOS)
 		{
 			//spawn top left
+			// use minus 10ish to keep away from edges
 			case 0:
-				ball[i].pos[0] = 0 + ball[i].radius;
-				ball[i].pos[1] = 0 + ball[i].radius;
+				ball[i].pos[0] = 10 + ball[i].radius;
+				ball[i].pos[1] = yres -10 - ball[i].radius;
 				ball[i].vel[0] = 2;
 				ball[i].vel[1] = 0;
 			break;
 			
 			//spawn top right
 			case 1:
-				ball[i].pos[0] = xres - ball[i].radius;
-				ball[i].pos[1] = yres - ball[i].radius;
+				ball[i].pos[0] = xres - 10 - ball[i].radius;
+				ball[i].pos[1] = yres - 10 - ball[i].radius;
 				ball[i].vel[0] = -2;
-				ball[i].vel[1] = 0;
+				ball[i].vel[1] = -2;
 			break;
 			//spawn bottom left
 			case 2:
-				ball[i].pos[0] = 0 - ball[i].radius;
-				ball[i].pos[1] = yres - ball[i].radius;
+				ball[i].pos[0] = 0 + 10 + ball[i].radius;
+				ball[i].pos[1] = 0 + 10 + ball[i].radius;
 				ball[i].vel[0] = 2;
 				ball[i].vel[1] = 0;
 			break;
@@ -1308,7 +1329,7 @@ void physics(void)
 				ball[i].pos[0] = xres - ball[i].radius;
 				ball[i].pos[1] = 0 + ball[i].radius;
 				ball[i].vel[0] = -2;
-				ball[i].vel[1] = 0;
+				ball[i].vel[1] = -2;
 			break;
 
 		}
@@ -1330,10 +1351,13 @@ void physics(void)
 		//ball[i].pos[1] = newposy;
 	
 
+		//speed of the balls
+		/*
 		if (ball[i].vel[0] < .5 && ball[i].vel[1] < .5) {
 			ball[i].vel[0] = .6;
 			ball[i].vel[1] = .6;
 		}
+		*/
 
 
 	}
