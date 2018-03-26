@@ -334,7 +334,8 @@ public:
 	float radius;
 	float mass;
 	float angle;
-} ball[15];
+	bool split = false;
+} ball[100];
 
 
 class Player {
@@ -367,6 +368,7 @@ class Game {
 	int nBullets;
 	int maxBullets;
 	int score;
+	int level;
 	float moveSpeed;
 	
 	//texures
@@ -378,6 +380,7 @@ class Game {
 	unsigned char keys[65535];
 
 	Game(){
+		level = 0;
 		score = 0;
 	    	state = STATE_STARTUP;
 		spawner = false;
@@ -584,7 +587,22 @@ void clearBalls(void)
 
 void scenario1(void)
 {
+
+	for(int i = 0; i < 2; i++) {
+
+	//top right start 
+		ball[i].pos[0] = 900;
+		ball[i].pos[1] = 700;
+		ball[i].vel[0] = 0.0;
+		ball[i].vel[1] = 0.0;
+		ball[i].radius = 40.0;
+		ball[i].mass = sphereVolume(ball[0].radius);
+		ball[i].split = false;
+		game.n++;
+	}
 	game.state = STATE_GAMEPLAY;
+
+	/*
 	//top right start 
 	ball[0].pos[0] = xres - 50;
 	ball[0].pos[1] = yres - 50;
@@ -592,6 +610,7 @@ void scenario1(void)
 	ball[0].vel[1] = 0.0;
 	ball[0].radius = 40.0;
 	ball[0].mass = sphereVolume(ball[0].radius);
+	ball[0].split = false;
 	game.n++;
 	//bot left start
 	ball[1].pos[0] = 50;
@@ -599,8 +618,10 @@ void scenario1(void)
 	ball[1].vel[0] = 0.0;
 	ball[1].vel[1] = 0.0;
 	ball[1].radius = 40.0;
+	ball[1].split = false;
 	ball[1].mass = sphereVolume(ball[1].radius);
 	game.n++;
+	*/
 }
 
 
@@ -1103,7 +1124,7 @@ void physics(void)
 			playSound(1);
 			}
 		}
-		if (ball[i].pos[1] >= (Flt)yres-ball[i].radius && ball[i].vel[1] >= 0.0) {
+		if (ball[i].pos[1] >= (Flt)yres-ball[i].radius + 100 && ball[i].vel[1] >= 0.0) {
 		
 			if (ball[i].pos[1] != 700 && ball[i].pos[0] != 900) {
 				ball[i].vel[1] = -ball[i].vel[1];
@@ -1170,8 +1191,30 @@ void physics(void)
 		if (pow(newx,2) + pow(newy, 2) < pow(ball[i2].radius,2)) {
 		//	ball[i2].vel[0] = -ball[i2].vel[0];
 			playSound(1);
-			printf("ball[%i] hit sending off screen \n", i2);
+
+			//debugging
+			//game.score = 35;
+
+			//split hit ball into 2 new balls
+			if (ball[i2].split == false && game.level >= 3 && ball[i2].radius == 40){
+				ball[i2].radius = ball[i2].radius/2;
+				//game.n++;
+				ball[game.n].radius = ball[i2].radius;
+				ball[game.n].pos[0] = ball[i2].pos[0] + ball[i2].radius;
+				ball[game.n].pos[1] = ball[i2].pos[1] + ball[i2].radius;
+				if (game.n >= 50) {
+					ball[game.n].split = true;
+					ball[i2].split = true;
+				}
+				game.n++;
+				return;
+			} else {
+			
+			//printf("ball[%i] hit sending off screen \n", i2);
 			//remove ball that was hit
+			game.score = game.score + 1;
+
+			printf("ball[%i] hit Score = %i \n", i2, game.score);
 			ball[i2].pos[0] = 900;
 			ball[i2].pos[1] = 700;
 			ball[i2].vel[0] = 0;
@@ -1186,9 +1229,11 @@ void physics(void)
 		//		ball[i2] = ball[game.n];
 		//		game.n--;
 		//	}
+		
 			//remove bullet that was hit with ball
 			game.particle[i] = game.particle[game.nBullets-1];
 			game.nBullets--;
+			}
 		}
 
 	}
@@ -1297,6 +1342,7 @@ void physics(void)
 		//debugging
 		//randomPOS = 3;
 		printf("%d = randomPOS\n", randomPOS);
+		ball[i].radius = 40;
 		
 
 		switch (randomPOS)
@@ -1344,8 +1390,8 @@ void physics(void)
 		//update ball pos to chase player
 		ball[i].angle = game.player.angle;
 
-		Flt newposx = game.player.pos[0];
-		Flt newposy = game.player.pos[1];
+		//Flt newposx = game.player.pos[0];
+		//Flt newposy = game.player.pos[1];
 
 		//ball[i].pos[0] = newposx;
 		//ball[i].pos[1] = newposy;
@@ -1520,6 +1566,7 @@ void render(void)
 
 	if(game.state == STATE_GAMEOVER) {
 
+		game.score = 0;
 
 		glColor3ub(255,255,255);
 
@@ -1554,6 +1601,19 @@ void render(void)
  		renderBalls();
 
 
+		//game level 
+		if (game.score == 0) {
+			game.level = 0;
+		}
+		if (game.score == 1) {
+			game.level = 1;
+		}
+		if (game.score == 3) {
+			game.level = 2;
+		}
+		if (game.score == 10) {
+			game.level = 3;
+		}
 	
 		//render particles
 		//still needs some love
@@ -1576,6 +1636,8 @@ void render(void)
 
 	}
 	if(game.state == STATE_STARTUP) {
+
+		
 
 		//setup player center pos
 		game.player.radius = 25;
