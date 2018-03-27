@@ -538,6 +538,7 @@ void init_balls(void)
 	ball[0].mass = sphereVolume(ball[0].radius);
 	game.n++;
 	//
+	/*
 	ball[1].pos[0] = 400;
 	ball[1].pos[1] = yres-150;
 	ball[1].vel[0] = 0.0;
@@ -547,6 +548,7 @@ void init_balls(void)
 	ball[1].radius = 25.0;
 	ball[1].mass = sphereVolume(ball[1].radius);
 	game.n++;
+	*/
 
 }
 
@@ -572,12 +574,13 @@ void clearBullets(void)
 
 void clearBalls(void)
 {
+	//puts balls postions off screen and defaut radius
 	for( int i; i < game.n; i++) {
-		ball[i].pos[0] = 200;
-		ball[i].pos[1] = yres-150;
+		ball[i].pos[0] = 999;
+		ball[i].pos[1] = 999;
 		ball[i].vel[0] = 0.0;
 		ball[i].vel[1] = 0.0;
-		ball[i].radius = 70.0;
+		ball[i].radius = 40.0;
 		ball[i].mass = sphereVolume(ball[i].radius);
 		game.n--;
 	}
@@ -894,6 +897,7 @@ void gameOver(void)
 	game.player.pos[0] = xres/2;
 	game.player.pos[1] = yres/2;
 	game.state = STATE_GAMEOVER;
+	game.n = 0;
 
 }
 
@@ -1194,14 +1198,17 @@ void physics(void)
 
 			//debugging
 			//game.score = 35;
+			//game.level = 3;
 
 			//split hit ball into 2 new balls
 			if (ball[i2].split == false && game.level >= 3 && ball[i2].radius == 40){
 				ball[i2].radius = ball[i2].radius/2;
 				//game.n++;
 				ball[game.n].radius = ball[i2].radius;
-				ball[game.n].pos[0] = ball[i2].pos[0] + ball[i2].radius;
-				ball[game.n].pos[1] = ball[i2].pos[1] + ball[i2].radius;
+				ball[game.n].pos[0] = ball[i2].pos[0] + ball[i2].radius + 10;
+				ball[game.n].pos[1] = ball[i2].pos[1] + ball[i2].radius + 10;
+				ball[game.n].vel[0] = -ball[i2].vel[0];
+				ball[game.n].vel[1] = -ball[i2].vel[1];
 				if (game.n >= 50) {
 					ball[game.n].split = true;
 					ball[i2].split = true;
@@ -1340,7 +1347,7 @@ void physics(void)
 		//gives random number from 0 - 4
 		int randomPOS = rand()%3;
 		//debugging
-		//randomPOS = 3;
+		//randomPOS = 0;
 		printf("%d = randomPOS\n", randomPOS);
 		ball[i].radius = 40;
 		
@@ -1352,8 +1359,8 @@ void physics(void)
 			case 0:
 				ball[i].pos[0] = 10 + ball[i].radius;
 				ball[i].pos[1] = yres -10 - ball[i].radius;
-				ball[i].vel[0] = 2;
-				ball[i].vel[1] = 0;
+				ball[i].vel[0] = (rand()%3)+1 * game.level;
+				ball[i].vel[1] = -((rand()%3) * game.level);
 			break;
 			
 			//spawn top right
@@ -1637,7 +1644,8 @@ void render(void)
 	}
 	if(game.state == STATE_STARTUP) {
 
-		
+		//clears the rendering of balls
+		game.n = 0;		
 
 		//setup player center pos
 		game.player.radius = 25;
