@@ -350,6 +350,13 @@ public:
 	float eye2;
 	float eyeBall1;
 	float eyeBall2;
+	float mouth;
+	float mouthSad;
+	float mouthHappy;
+	bool lookUp;
+	bool lookDown;
+	bool lookLeft;
+	bool lookRight;
 };
 
 enum State {
@@ -717,6 +724,11 @@ void shootUp()
 	game.particle[game.nBullets].velocity[1] = rnd() * 2.0; 
 	game.nBullets++;
 
+	game.player.lookUp = true;
+	game.player.lookLeft = false;
+	game.player.lookRight = false;
+	game.player.lookDown = false;
+
 
 }
 
@@ -730,6 +742,12 @@ void shootDown()
 	game.particle[game.nBullets].velocity[0] = -(rnd() * .1); 
 	game.particle[game.nBullets].velocity[1] = -(rnd() * 2.0); 
 	game.nBullets++;
+
+
+	game.player.lookDown = true;
+	game.player.lookUp = false;
+	game.player.lookLeft = false;
+	game.player.lookRight = false;
 
 
 }
@@ -747,6 +765,8 @@ void shootDownLeft()
 	game.nBullets++;
 
 
+
+
 }
 
 void shootDownRight()
@@ -759,6 +779,7 @@ void shootDownRight()
 	game.particle[game.nBullets].velocity[0] = rnd() * 2.0; 
 	game.particle[game.nBullets].velocity[1] = -(rnd() * 2.0); 
 	game.nBullets++;
+
 
 
 }
@@ -804,6 +825,11 @@ void shootLeft()
 	game.particle[game.nBullets].velocity[1] = (rnd() * .1); 
 	game.nBullets++;
 
+	game.player.lookLeft = true;
+	game.player.lookRight = false;
+	game.player.lookUp = false;
+	game.player.lookDown = false;
+
 
 }
 
@@ -817,6 +843,12 @@ void shootRight()
 	game.particle[game.nBullets].velocity[0] = rnd() * 2.0; 
 	game.particle[game.nBullets].velocity[1] = rnd() * .1; 
 	game.nBullets++;
+
+
+	game.player.lookRight = true;
+	game.player.lookUp = false;
+	game.player.lookLeft = false;
+	game.player.lookDown = false;
 
 
 }
@@ -1616,7 +1648,59 @@ void render(void)
 		glTranslatef(game.player.pos[0]+8, game.player.pos[1]+5, game.player.pos[2]);
 		drawPlayer(game.player.eye2);
 		glPopMatrix();
+
+		//draw player left eye ball
+		glColor3ub(0,0,0);
+		glPushMatrix();
+		if (game.player.lookUp == true) {
+
+			glTranslatef(game.player.pos[0]+8, game.player.pos[1]+8, game.player.pos[2]);
+
+		}
+		else if (game.player.lookDown == true) {
+
+			glTranslatef(game.player.pos[0]+8, game.player.pos[1]-1, game.player.pos[2]);
+		}
+		else if (game.player.lookLeft == true) {
+
+			glTranslatef(game.player.pos[0]-12, game.player.pos[1]+5, game.player.pos[2]);
+		}
+		else if (game.player.lookRight == true) {
+
+			glTranslatef(game.player.pos[0], game.player.pos[1]+5, game.player.pos[2]);
+		}
+	       	else {
+
+			glTranslatef(game.player.pos[0]+8, game.player.pos[1]+5, game.player.pos[2]);
+		}
+		drawPlayer(game.player.eyeBall1);
+		glPopMatrix();
 		//
+		//draw player right eye ball
+		glColor3ub(0,0,0);
+		glPushMatrix();
+		if (game.player.lookUp == true) {
+			
+			glTranslatef(game.player.pos[0]-8, game.player.pos[1]+8, game.player.pos[2]);
+		}
+		else if (game.player.lookDown == true) {
+
+			glTranslatef(game.player.pos[0]-8, game.player.pos[1]-1, game.player.pos[2]);
+		}
+		else if (game.player.lookLeft == true) {
+	
+			glTranslatef(game.player.pos[0]+1, game.player.pos[1]+5, game.player.pos[2]);
+		}
+		else if (game.player.lookRight == true) {
+
+			glTranslatef(game.player.pos[0]+12, game.player.pos[1]+5, game.player.pos[2]);
+		}
+		else	{
+
+			glTranslatef(game.player.pos[0]-8, game.player.pos[1]+5, game.player.pos[2]);
+		}
+		drawPlayer(game.player.eyeBall2);
+		glPopMatrix();
 		//
  		renderBalls();
 
@@ -1676,6 +1760,8 @@ void render(void)
 
 		game.player.eye1 = 8;
 		game.player.eye2 = 8;
+		game.player.eyeBall1 = 2;
+		game.player.eyeBall2 = 2;
 
 
 		glColor3ub(255,255,255);
