@@ -346,6 +346,10 @@ public:
 	float angle;
 	float radius;
 	float mass;
+	float eye1;
+	float eye2;
+	float eyeBall1;
+	float eyeBall2;
 };
 
 enum State {
@@ -690,32 +694,8 @@ void check_keys(XEvent *e)
 				//scenario
 				if(game.state == STATE_STARTUP) { scenario1(); }
 				break;
-			case XK_o:
-				ball[0].radius -= 1.0;
-				ball[0].mass = sphereVolume(ball[0].radius);
-				break;
-			case XK_i:
-				ball[0].radius += 1.0;
-				ball[0].mass = sphereVolume(ball[0].radius);
-				break;
-			case XK_k:
-				ball[1].radius -= 1.0;
-				ball[1].mass = sphereVolume(ball[1].radius);
-				break;
-			case XK_l:
-				ball[1].radius += 1.0;
-				ball[1].mass = sphereVolume(ball[1].radius);
-				break;
-			case XK_m:
-				//press s to slow the balls
-				ball[0].vel[0] *= 0.5;
-				ball[0].vel[1] *= 0.5;
-				ball[1].vel[0] *= 0.5;
-				ball[1].vel[1] *= 0.5;
-				break;
-			case XK_Escape:
+				case XK_Escape:
 				game.state = STATE_STARTUP;
-				//done=1;
 				break;
 			case XK_p:
 				done=1;
@@ -1347,8 +1327,8 @@ void physics(void)
 		//gives random number from 0 - 4
 		int randomPOS = rand()%3;
 		//debugging
-		//randomPOS = 0;
-		printf("%d = randomPOS\n", randomPOS);
+		//randomPOS = 3;
+		//printf("%d = randomPOS\n", randomPOS);
 		ball[i].radius = 40;
 		
 
@@ -1360,29 +1340,29 @@ void physics(void)
 				ball[i].pos[0] = 10 + ball[i].radius;
 				ball[i].pos[1] = yres -10 - ball[i].radius;
 				ball[i].vel[0] = (rand()%3)+1 * game.level;
-				ball[i].vel[1] = -((rand()%3) * game.level);
+				ball[i].vel[1] = -((rand()%3)+1 * game.level);
 			break;
 			
 			//spawn top right
 			case 1:
 				ball[i].pos[0] = xres - 10 - ball[i].radius;
 				ball[i].pos[1] = yres - 10 - ball[i].radius;
-				ball[i].vel[0] = -2;
-				ball[i].vel[1] = -2;
+				ball[i].vel[0] = -((rand()%3)+1 * game.level);
+				ball[i].vel[1] = -((rand()%3)+1 * game.level);
 			break;
 			//spawn bottom left
 			case 2:
 				ball[i].pos[0] = 0 + 10 + ball[i].radius;
 				ball[i].pos[1] = 0 + 10 + ball[i].radius;
-				ball[i].vel[0] = 2;
-				ball[i].vel[1] = 0;
+				ball[i].vel[0] = (rand()%3)+1 * game.level;
+				ball[i].vel[1] = ((rand()%3)+1 * game.level);
 			break;
 			//spawn bottom right
 			case 3:
 				ball[i].pos[0] = xres - ball[i].radius;
 				ball[i].pos[1] = 0 + ball[i].radius;
-				ball[i].vel[0] = -2;
-				ball[i].vel[1] = -2;
+				ball[i].vel[0] = -((rand()%3)+1 * game.level);
+				ball[i].vel[1] = ((rand()%3)+1 * game.level);
 			break;
 
 		}
@@ -1395,7 +1375,7 @@ void physics(void)
 		}
 
 		//update ball pos to chase player
-		ball[i].angle = game.player.angle;
+		//ball[i].angle = game.player.angle;
 
 		//Flt newposx = game.player.pos[0];
 		//Flt newposy = game.player.pos[1];
@@ -1405,12 +1385,14 @@ void physics(void)
 	
 
 		//speed of the balls
-		/*
-		if (ball[i].vel[0] < .5 && ball[i].vel[1] < .5) {
-			ball[i].vel[0] = .6;
-			ball[i].vel[1] = .6;
+		//cap speed of the balls	
+		if (ball[i].vel[0] > 15) {
+			ball[i].vel[0] = 15;
 		}
-		*/
+		if (ball[i].vel[1] > 15) {
+			ball[i].vel[1] = 15;
+		}
+		
 
 
 	}
@@ -1448,8 +1430,10 @@ void drawPlayer(Flt rad)
 	int i;
 	static int firsttime2=1;
 	static Flt verts[32][2];
+	static Flt vertsEye1[32][2];
 	static int n=32;
 	if (firsttime2) {
+		//draw body
 		Flt ang=0.0;
 		Flt inc = 3.14159 * 2.0 / (Flt)n;
 		for (i=0; i<n; i++) {
@@ -1457,106 +1441,123 @@ void drawPlayer(Flt rad)
 			verts[i][1] = cos(ang);
 			ang += inc;
 		}
+		//draw left eye
+		 ang=0.0;
+		 inc = 3.14159 * 2.0 / (Flt)n;
+		for (i=0; i<n; i++) {
+			vertsEye1[i][0] = sin(ang);
+			vertsEye1[i][1] = cos(ang);
+			ang += inc;
+		}
 		firsttime2=0;
 	}
+	//draw the body
 	glBegin(GL_TRIANGLE_FAN);
 		for (i=0; i<n; i++) {
 			glVertex2f(verts[i][0]*rad, verts[i][1]*rad);
 		}
 	glEnd();
+	//draw left eye
+	glBegin(GL_TRIANGLE_FAN);
+		for (i=0; i<n; i++) {
+			glVertex2f(vertsEye1[i][0]*rad/2, vertsEye1[i][1]*rad/2);
+		}
+	glEnd();
+
 }
 
 void renderBalls(void)
 {
 
 	//draw balls
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[0].pos[0], ball[0].pos[1], ball[0].pos[2]);
 	drawBall(ball[0].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[1].pos[0], ball[1].pos[1], ball[1].pos[2]);
 	drawBall(ball[1].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[3].pos[0], ball[3].pos[1], ball[3].pos[2]);
 	drawBall(ball[3].radius);
 	glPopMatrix();
 	//
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[4].pos[0], ball[4].pos[1], ball[4].pos[2]);
 	drawBall(ball[4].radius);
 	glPopMatrix();
 	//
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[5].pos[0], ball[5].pos[1], ball[5].pos[2]);
 	drawBall(ball[5].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[6].pos[0], ball[6].pos[1], ball[6].pos[2]);
 	drawBall(ball[6].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[7].pos[0], ball[7].pos[1], ball[7].pos[2]);
 	drawBall(ball[7].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[8].pos[0], ball[8].pos[1], ball[8].pos[2]);
 	drawBall(ball[8].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[9].pos[0], ball[9].pos[1], ball[9].pos[2]);
 	drawBall(ball[9].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[10].pos[0], ball[10].pos[1], ball[10].pos[2]);
 	drawBall(ball[10].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[11].pos[0], ball[11].pos[1], ball[11].pos[2]);
 	drawBall(ball[11].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[12].pos[0], ball[12].pos[1], ball[12].pos[2]);
 	drawBall(ball[12].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[13].pos[0], ball[13].pos[1], ball[13].pos[2]);
 	drawBall(ball[13].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[14].pos[0], ball[14].pos[1], ball[14].pos[2]);
 	drawBall(ball[14].radius);
 	glPopMatrix();
 	//
-	glColor3ub(17,219,17);
+	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[15].pos[0], ball[15].pos[1], ball[15].pos[2]);
 	drawBall(ball[15].radius);
@@ -1598,10 +1599,22 @@ void render(void)
 	if(game.state == STATE_GAMEPLAY) {
 
 		//draw player
-		glColor3ub(255,255,255);
+		glColor3ub(255,207,13);
 		glPushMatrix();
 		glTranslatef(game.player.pos[0], game.player.pos[1], game.player.pos[2]);
 		drawPlayer(game.player.radius);
+		glPopMatrix();
+		//draw player left eye
+		glColor3ub(255,225,255);
+		glPushMatrix();
+		glTranslatef(game.player.pos[0]-8, game.player.pos[1]+5, game.player.pos[2]);
+		drawPlayer(game.player.eye1);
+		glPopMatrix();
+		//draw player right eye
+		glColor3ub(255,225,255);
+		glPushMatrix();
+		glTranslatef(game.player.pos[0]+8, game.player.pos[1]+5, game.player.pos[2]);
+		drawPlayer(game.player.eye2);
 		glPopMatrix();
 		//
 		//
@@ -1612,14 +1625,23 @@ void render(void)
 		if (game.score == 0) {
 			game.level = 0;
 		}
-		if (game.score == 1) {
+		if (game.score == 10) {
 			game.level = 1;
 		}
-		if (game.score == 3) {
+		if (game.score == 20) {
 			game.level = 2;
 		}
-		if (game.score == 10) {
+		if (game.score == 25) {
 			game.level = 3;
+		}
+		if (game.score == 30) {
+			game.level = 4;
+		}
+		if (game.score == 35) {
+			game.level = 5;
+		}
+		if (game.score == 45) {
+			game.level = 6;
 		}
 	
 		//render particles
@@ -1651,6 +1673,10 @@ void render(void)
 		game.player.radius = 25;
 		game.player.pos[0] = xres/2;
 		game.player.pos[1] = yres/2;
+
+		game.player.eye1 = 8;
+		game.player.eye2 = 8;
+
 
 		glColor3ub(255,255,255);
 		//show title menu texture
