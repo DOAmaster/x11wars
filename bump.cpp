@@ -334,7 +334,7 @@ public:
 	float radius;
 	float mass;
 	float angle;
-	bool split = false;
+	bool split;
 } ball[100];
 
 
@@ -855,26 +855,40 @@ void shootRight()
 
 void moveLeft() 
 { 
-    game.player.pos[0] -= game.moveSpeed;
+	if(game.player.vel[0] > -2 && game.player.vel[0] < 2) {
+		game.player.vel[0] -= .4;
+	}
+    //game.player.pos[0] -= game.moveSpeed;
     game.player.angle = 270;
 }
 
 void moveRight()
 {
-    game.player.pos[0] += game.moveSpeed;
+
+	if(game.player.vel[0] > -2 && game.player.vel[0] < 2) {
+		game.player.vel[0] += .4;
+	}
+    //game.player.pos[0] += game.moveSpeed;
     game.player.angle = 90; 
 }
 
 void moveUp() 
-{ 
-    game.player.pos[1] += game.moveSpeed;
+{
+
+	if(game.player.vel[1] > -2 && game.player.vel[1] < 2) {
+    		game.player.vel[1] += .4;
+	} 
+    //game.player.pos[1] += game.moveSpeed;
     game.player.angle = 360;
 
 }
 
 void moveDown() 
 { 
-    game.player.pos[1] -= game.moveSpeed;
+	if(game.player.vel[1] > -2 && game.player.vel[1] < 2) {
+  	  game.player.vel[1] -= .4;
+	}
+    //game.player.pos[1] -= game.moveSpeed;
     game.player.angle = 180;
 
 }
@@ -1020,23 +1034,45 @@ void physics(void)
 	*/
 
 	//Different physics applied here...
-	//100% elastic collisions. 
 	for (int i=0; i<game.n; i++) {
 
-
-		//TODO fix the chase logic
-		//update ball pos to chase player
-	//	Flt playerPosX = game.player.pos[0];
-	//	Flt playerPosY = game.player.pos[1];
-	
-
-	//	ball[i].angle = playerPosX / playerPosY;
-	//	ball[i].vel[0] = .6;
-	//	ball[i].vel[1] = .6;
-
+		//moves ball via vel
 		ball[i].pos[0] += ball[i].vel[0];
 		ball[i].pos[1] += ball[i].vel[1];
 	}
+	//player physics applied here...
+	game.player.pos[0] += game.player.vel[0];
+	game.player.pos[1] += game.player.vel[1];
+
+	//player movement drag
+	if (game.player.vel[0] > 0) {
+		game.player.vel[0] = game.player.vel[0] - .08;
+		if (game.player.vel[0] < .01) {
+			game.player.vel[0] = 0;
+		}
+	}
+	if (game.player.vel[0] < 0) {
+		game.player.vel[0] = game.player.vel[0] + .08;
+
+		if (game.player.vel[0] > .01) {
+			game.player.vel[0] = 0;
+		}
+	}
+	if (game.player.vel[1] > 0) {
+		game.player.vel[1] = game.player.vel[1] - .08;
+		
+		if (game.player.vel[1] < .01) {
+			game.player.vel[1] = 0;
+		}
+	}
+	if (game.player.vel[1] < 0) {
+		game.player.vel[1] = game.player.vel[1] + .08;
+		if (game.player.vel[1] > .01) {
+			game.player.vel[1] = 0;
+		}	
+	}
+	
+
 	//check for collision here
 	Flt distance, speed;
 	//Flt distance, pdistance, speed;
@@ -1189,12 +1225,8 @@ void physics(void)
 			game.nBullets--;
 		}
 		//check for slow bullets no working
-		/*
-		if(game.particle[i].velocity[0] < .1 && game.particle[i].velocity[1] < .1) {	
-			game.particle[i] = game.particle[game.nBullets-1];
-			game.nBullets--;
-		}
-		*/
+		
+		
 
 
 		//BULLET COLLIONS WITH BALL
@@ -1424,6 +1456,8 @@ void physics(void)
 		if (ball[i].vel[1] > 15) {
 			ball[i].vel[1] = 15;
 		}
+
+	
 		
 
 
