@@ -8,12 +8,12 @@
 #	/usr/lib/libalut.so
 #
 
-all: bump
+all: x11wars
 
-bump: bump.cpp fonts.h
-	g++ bump.cpp libggfonts.a -Wall -obump -lX11 -lGL -lGLU -lm -lrt
+x11wars: x11wars.cpp fonts.h
+	g++ x11wars.cpp libggfonts.a -Wall -ox11wars -lX11 -lGL -lGLU -lm -lrt
 
 clean:
-	rm -f bump
+	rm -f x11wars
 	rm -f *.o
 
