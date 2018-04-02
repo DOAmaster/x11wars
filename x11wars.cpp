@@ -41,6 +41,11 @@ typedef Flt Vec[3];
 #define GRAVITY 0.1
 #define PI 3.141592653589793
 
+#define xReserve 900;
+#define yReserve 700;
+
+
+
 //might use for future ai 
 const float gravity = 0.2f;
 const int MAX_BULLETS = 11;
@@ -335,6 +340,7 @@ public:
 	float mass;
 	float angle;
 	bool split;
+	Particle particle[3];
 } ball[100];
 
 
@@ -1237,6 +1243,8 @@ void physics(void)
 		//finds position of particle postion against the balls
 		Flt newx = game.particle[i].s.center[0] - ball[i2].pos[0];
 		Flt newy = game.particle[i].s.center[1] - ball[i2].pos[1];
+		//
+		//BULLET HIT BALL
 		if (pow(newx,2) + pow(newy, 2) < pow(ball[i2].radius,2)) {
 		//	ball[i2].vel[0] = -ball[i2].vel[0];
 			playSound(1);
@@ -1254,13 +1262,19 @@ void physics(void)
 				ball[game.n].pos[1] = ball[i2].pos[1] + ball[i2].radius + 10;
 				ball[game.n].vel[0] = -ball[i2].vel[0];
 				ball[game.n].vel[1] = -ball[i2].vel[1];
-				if (game.n >= 50) {
+				if (game.n >= 10) {
 					ball[game.n].split = true;
 					ball[i2].split = true;
 				}
 				game.n++;
 				return;
 			} else {
+
+
+			
+			ball[i2].particle[0].s.center[0] = ball[i2].pos[0]+(rnd()+1);
+			ball[i2].particle[1].s.center[0] = ball[i2].pos[0]+(rnd()+1);
+			ball[i2].particle[2].s.center[0] = ball[i2].pos[0]+(rnd()+1);
 			
 			//printf("ball[%i] hit sending off screen \n", i2);
 			//remove ball that was hit
@@ -1452,11 +1466,11 @@ void physics(void)
 
 		//speed of the balls
 		//cap speed of the balls	
-		if (ball[i].vel[0] > 15) {
-			ball[i].vel[0] = 15;
+		if (ball[i].vel[0] > 10) {
+			ball[i].vel[0] = 10;
 		}
-		if (ball[i].vel[1] > 15) {
-			ball[i].vel[1] = 15;
+		if (ball[i].vel[1] > 10) {
+			ball[i].vel[1] = 10;
 		}
 
 	
@@ -1537,7 +1551,19 @@ void drawPlayer(Flt rad)
 void renderBalls(void)
 {
 
+	for(int i=0; i < game.n; i++) {
 	//draw balls
+	glColor3ub(255,0,0);
+	glPushMatrix();
+	glTranslatef(ball[i].pos[0], ball[i].pos[1], ball[i].pos[2]);
+	drawBall(ball[i].radius);
+	glPopMatrix();
+	//
+	
+	}
+
+	//draw balls
+	/*
 	glColor3ub(255,0,0);
 	glPushMatrix();
 	glTranslatef(ball[0].pos[0], ball[0].pos[1], ball[0].pos[2]);
@@ -1631,7 +1657,7 @@ void renderBalls(void)
 	drawBall(ball[15].radius);
 	glPopMatrix();
 	//
-	//
+	*/
 }
 
 
@@ -1740,6 +1766,23 @@ void render(void)
 		//
  		renderBalls();
 
+		//game new enemy spawner depending on level and enemy number
+		//TODO redone this logic later
+		/*
+		if (game.level == 1 && game.n < 3) {
+
+			//add new ball enemy to off screen spawner reserve 
+			ball[game.n+1].pos[0] = xReserve;
+			ball[game.n+1].pos[1] = yReserve;
+			ball[game.n+1].vel[0] = 0.0;
+			ball[game.n+1].vel[1] = 0.0;
+			ball[game.n+1].radius = 40.0;
+			ball[game.n+1].mass = sphereVolume(ball[0].radius);
+			ball[game.n+1].split = false;
+			game.n++;
+		}
+		*/
+
 
 		//game level 
 		if (game.score == 0) {
@@ -1779,7 +1822,24 @@ void render(void)
 		glVertex2i(game.particle[i].s.center[0]+w, game.particle[i].s.center[1]-h);
 		glEnd();
 		glPopMatrix();
-	}
+
+		}
+		//render particles from balls
+		for (int i = 0; i < game.n; i++) {
+		glPushMatrix();
+		glColor3ub(255,0,0);
+		w = 2;
+		h = 2;
+		glBegin(GL_QUADS);
+		glVertex2i(ball[i].particle[i].s.center[0]-w, ball[i].particle[0].s.center[1]-h);
+		glVertex2i(ball[i].particle[i].s.center[0]-w, ball[i].particle[0].s.center[1]+h);
+		glVertex2i(ball[i].particle[i].s.center[0]+w, ball[i].particle[0].s.center[1]+h);
+		glVertex2i(ball[i].particle[i].s.center[0]+w, ball[i].particle[0].s.center[1]-h);
+		glEnd();
+		glPopMatrix();
+		}
+
+	
 
 
 
@@ -1831,6 +1891,3 @@ void render(void)
 
 
 }
-
-
-
