@@ -1050,6 +1050,28 @@ void physics(void)
 		ball[i].pos[0] += ball[i].vel[0];
 		ball[i].pos[1] += ball[i].vel[1];
 	}
+
+	//pulls particles down 
+	for (int i=0; i<game.nHit; i++) {
+		
+		game.hitPart[i].s.center[0] -= game.hitPart[i].velocity[0];
+		game.hitPart[i].s.center[1] -= game.hitPart[i].velocity[1];
+	}
+	//moves death particles off screen
+	//TODO reuse off screen particles
+	for (int i=0; i < game.nHit; i++) {
+		if (game.hitPart[i].s.center[1] < -1) {
+			game.hitPart[i].s.center[0] = xReserve;
+			game.hitPart[i].s.center[1] = yReserve;
+			game.hitPart[i].velocity[0] = 0;
+			game.hitPart[i].velocity[1] = 0;
+		//	printf("moving death particle off screen\n");
+		//	game.nHit--;
+		}
+
+	}
+	
+
 	//player physics applied here...
 	game.player.pos[0] += game.player.vel[0];
 	game.player.pos[1] += game.player.vel[1];
@@ -1275,12 +1297,12 @@ void physics(void)
 
 
 			//Spawn death particles	
-			ball[i2].particle[0].s.center[0] = ball[i2].pos[0]+(rnd()+1);
-			ball[i2].particle[0].s.center[1] = ball[i2].pos[1]+(rnd()+1);
-			ball[i2].particle[1].s.center[0] = ball[i2].pos[0]+(rnd()+1);
-			ball[i2].particle[1].s.center[1] = ball[i2].pos[1]+(rnd()+1);
-			ball[i2].particle[2].s.center[0] = ball[i2].pos[0]+(rnd()+1);
-			ball[i2].particle[2].s.center[1] = ball[i2].pos[1]+(rnd()+1);
+			game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0];
+			game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
+			game.hitPart[game.nHit].velocity[0] = 0;
+			game.hitPart[game.nHit].velocity[1] = 5;
+			game.nHit++;
+
 			
 			//printf("ball[%i] hit sending off screen \n", i2);
 			//remove ball that was hit
@@ -1288,6 +1310,7 @@ void physics(void)
 
 			//printf("ball[%i] hit Score = %i \n", i2, game.score);
 			printf("Score: %i \n", game.score);
+
 			ball[i2].pos[0] = 900;
 			ball[i2].pos[1] = 700;
 			ball[i2].vel[0] = 0;
@@ -1568,102 +1591,6 @@ void renderBalls(void)
 	
 	}
 
-	//draw balls
-	/*
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[0].pos[0], ball[0].pos[1], ball[0].pos[2]);
-	drawBall(ball[0].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[1].pos[0], ball[1].pos[1], ball[1].pos[2]);
-	drawBall(ball[1].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[3].pos[0], ball[3].pos[1], ball[3].pos[2]);
-	drawBall(ball[3].radius);
-	glPopMatrix();
-	//
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[4].pos[0], ball[4].pos[1], ball[4].pos[2]);
-	drawBall(ball[4].radius);
-	glPopMatrix();
-	//
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[5].pos[0], ball[5].pos[1], ball[5].pos[2]);
-	drawBall(ball[5].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[6].pos[0], ball[6].pos[1], ball[6].pos[2]);
-	drawBall(ball[6].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[7].pos[0], ball[7].pos[1], ball[7].pos[2]);
-	drawBall(ball[7].radius);
-	glPopMatrix();
-	//
-	
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[8].pos[0], ball[8].pos[1], ball[8].pos[2]);
-	drawBall(ball[8].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[9].pos[0], ball[9].pos[1], ball[9].pos[2]);
-	drawBall(ball[9].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[10].pos[0], ball[10].pos[1], ball[10].pos[2]);
-	drawBall(ball[10].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[11].pos[0], ball[11].pos[1], ball[11].pos[2]);
-	drawBall(ball[11].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[12].pos[0], ball[12].pos[1], ball[12].pos[2]);
-	drawBall(ball[12].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[13].pos[0], ball[13].pos[1], ball[13].pos[2]);
-	drawBall(ball[13].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[14].pos[0], ball[14].pos[1], ball[14].pos[2]);
-	drawBall(ball[14].radius);
-	glPopMatrix();
-	//
-	glColor3ub(255,0,0);
-	glPushMatrix();
-	glTranslatef(ball[15].pos[0], ball[15].pos[1], ball[15].pos[2]);
-	drawBall(ball[15].radius);
-	glPopMatrix();
-	//
-	*/
 }
 
 
@@ -1817,32 +1744,34 @@ void render(void)
 		//still needs some love
 		float h, w;
 		for (int i = 0; i < game.nBullets; i++) {
-		glPushMatrix();
-		glColor3ub(18,125,255);
-		w = 3;
-		h = 3;
-		glBegin(GL_QUADS);
-		glVertex2i(game.particle[i].s.center[0]-w, game.particle[i].s.center[1]-h);
-		glVertex2i(game.particle[i].s.center[0]-w, game.particle[i].s.center[1]+h);
-		glVertex2i(game.particle[i].s.center[0]+w, game.particle[i].s.center[1]+h);
-		glVertex2i(game.particle[i].s.center[0]+w, game.particle[i].s.center[1]-h);
-		glEnd();
-		glPopMatrix();
+			glPushMatrix();
+			glColor3ub(18,125,255);
+			w = 3;
+			h = 3;
+			glBegin(GL_QUADS);
+			glVertex2i(game.particle[i].s.center[0]-w, game.particle[i].s.center[1]-h);
+			glVertex2i(game.particle[i].s.center[0]-w, game.particle[i].s.center[1]+h);
+			glVertex2i(game.particle[i].s.center[0]+w, game.particle[i].s.center[1]+h);
+			glVertex2i(game.particle[i].s.center[0]+w, game.particle[i].s.center[1]-h);
+			glEnd();
+			glPopMatrix();
 
 		}
-		//render hitpart from balls
-		for (int i = 0; i < game.nHit; i++) {
-		glPushMatrix();
-		glColor3ub(255,0,0);
-		w = 2;
-		h = 2;
-		glBegin(GL_QUADS);
-		glVertex2i(game.hitPart[i].s.center[0]-w, ball[i].particle[0].s.center[1]-h);
-		glVertex2i(game.hitPart[i].s.center[0]-w, ball[i].particle[0].s.center[1]+h);
-		glVertex2i(game.hitPart[i].s.center[0]+w, ball[i].particle[0].s.center[1]+h);
-		glVertex2i(game.hitPart[i].s.center[0]+w, ball[i].particle[0].s.center[1]-h);
-		glEnd();
-		glPopMatrix();
+		//render hitpart death particles from balls
+		if(game.nHit > 0) {
+			for (int i = 0; i < game.nHit; i++) {
+				glPushMatrix();
+				glColor3ub(255,0,0);
+				w = 2;
+				h = 2;
+				glBegin(GL_QUADS);
+				glVertex2i(game.hitPart[i].s.center[0]-w, game.hitPart[i].s.center[1]-h);
+				glVertex2i(game.hitPart[i].s.center[0]-w, game.hitPart[i].s.center[1]+h);
+				glVertex2i(game.hitPart[i].s.center[0]+w, game.hitPart[i].s.center[1]+h);
+				glVertex2i(game.hitPart[i].s.center[0]+w, game.hitPart[i].s.center[1]-h);
+				glEnd();
+				glPopMatrix();
+			}
 		}
 
 	
