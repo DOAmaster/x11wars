@@ -37,7 +37,7 @@ typedef Flt Vec[3];
 #define VecCopy2d(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];
 #define VecNegate2d(a) (a)[0]=(-(a)[0]); (a)[1]=(-(a)[1]);
 #define VecDot2d(a,b) ((a)[0]*(b)[0]+(a)[1]*(b)[1])
-#define MAX_PARTICLES 1000
+#define MAX_PARTICLES 999
 #define GRAVITY 0.1
 #define PI 3.141592653589793
 
@@ -381,9 +381,11 @@ class Game {
 	Player player;
 //	Shape box[6];
 	Particle particle[MAX_PARTICLES];
+	Particle hitPart[MAX_PARTICLES];
 	int n;
 	int nBullets;
 	int maxBullets;
+	int nHit;
 	int score;
 	int level;
 	float moveSpeed;
@@ -402,6 +404,7 @@ class Game {
 	    	state = STATE_STARTUP;
 		spawner = false;
 		n = 0;
+		nHit = 0;
 		moveSpeed = .9;
 		maxBullets = 10;
 		nBullets = 0;
@@ -1271,10 +1274,13 @@ void physics(void)
 			} else {
 
 
-			
+			//Spawn death particles	
 			ball[i2].particle[0].s.center[0] = ball[i2].pos[0]+(rnd()+1);
+			ball[i2].particle[0].s.center[1] = ball[i2].pos[1]+(rnd()+1);
 			ball[i2].particle[1].s.center[0] = ball[i2].pos[0]+(rnd()+1);
+			ball[i2].particle[1].s.center[1] = ball[i2].pos[1]+(rnd()+1);
 			ball[i2].particle[2].s.center[0] = ball[i2].pos[0]+(rnd()+1);
+			ball[i2].particle[2].s.center[1] = ball[i2].pos[1]+(rnd()+1);
 			
 			//printf("ball[%i] hit sending off screen \n", i2);
 			//remove ball that was hit
@@ -1824,17 +1830,17 @@ void render(void)
 		glPopMatrix();
 
 		}
-		//render particles from balls
-		for (int i = 0; i < game.n; i++) {
+		//render hitpart from balls
+		for (int i = 0; i < game.nHit; i++) {
 		glPushMatrix();
 		glColor3ub(255,0,0);
 		w = 2;
 		h = 2;
 		glBegin(GL_QUADS);
-		glVertex2i(ball[i].particle[i].s.center[0]-w, ball[i].particle[0].s.center[1]-h);
-		glVertex2i(ball[i].particle[i].s.center[0]-w, ball[i].particle[0].s.center[1]+h);
-		glVertex2i(ball[i].particle[i].s.center[0]+w, ball[i].particle[0].s.center[1]+h);
-		glVertex2i(ball[i].particle[i].s.center[0]+w, ball[i].particle[0].s.center[1]-h);
+		glVertex2i(game.hitPart[i].s.center[0]-w, ball[i].particle[0].s.center[1]-h);
+		glVertex2i(game.hitPart[i].s.center[0]-w, ball[i].particle[0].s.center[1]+h);
+		glVertex2i(game.hitPart[i].s.center[0]+w, ball[i].particle[0].s.center[1]+h);
+		glVertex2i(game.hitPart[i].s.center[0]+w, ball[i].particle[0].s.center[1]-h);
 		glEnd();
 		glPopMatrix();
 		}
