@@ -37,7 +37,7 @@ typedef Flt Vec[3];
 #define VecCopy2d(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];
 #define VecNegate2d(a) (a)[0]=(-(a)[0]); (a)[1]=(-(a)[1]);
 #define VecDot2d(a,b) ((a)[0]*(b)[0]+(a)[1]*(b)[1])
-#define MAX_PARTICLES 999
+#define MAX_PARTICLES 1000
 #define GRAVITY 0.1
 #define PI 3.141592653589793
 
@@ -1296,8 +1296,22 @@ void physics(void)
 			} else {
 
 
-			//Spawn death particles	
+			//Spawn death particle 1	
 			game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0];
+			game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
+			game.hitPart[game.nHit].velocity[0] = 0;
+			game.hitPart[game.nHit].velocity[1] = 5;
+			game.nHit++;
+			//Spawn death particle 2
+	
+		//	game.hitPart[game.nHit+1].s.center[0] = ball[i2].pos[0]-15;
+		//	game.hitPart[game.nHit+1].s.center[1] = ball[i2].pos[1]+5;
+		//	game.hitPart[game.nHit+1].velocity[0] = 0;
+		//	game.hitPart[game.nHit+1].velocity[1] = 5;
+		//	game.nHit++;
+			//Spawn death particle 3
+	
+			game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
 			game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
 			game.hitPart[game.nHit].velocity[0] = 0;
 			game.hitPart[game.nHit].velocity[1] = 5;
@@ -1761,7 +1775,7 @@ void render(void)
 		if(game.nHit > 0) {
 			for (int i = 0; i < game.nHit; i++) {
 				glPushMatrix();
-				glColor3ub(255,0,0);
+				glColor3ub(255,255,255);
 				w = 2;
 				h = 2;
 				glBegin(GL_QUADS);
