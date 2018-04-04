@@ -65,6 +65,7 @@ struct Shape {
 struct Particle {
 	Shape s;
 	Vec velocity;
+	int count;
 };
 
 class Bullet {
@@ -731,6 +732,7 @@ void shootUp()
 	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
 	game.particle[game.nBullets].velocity[0] = ((rnd() * .1)+.1)*1.9; 
 	game.particle[game.nBullets].velocity[1] = ((rnd() * 2.0)+1)*1.9; 
+        game.particle[game.nBullets].count = 0;
 	game.nBullets++;
 
 	game.player.lookUp = true;
@@ -750,6 +752,7 @@ void shootDown()
 	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
 	game.particle[game.nBullets].velocity[0] = -((rnd() * .1)+.1)*2; 
 	game.particle[game.nBullets].velocity[1] = -((rnd() * 2.0)+1)*2; 
+        game.particle[game.nBullets].count = 0;
 	game.nBullets++;
 
 
@@ -771,6 +774,7 @@ void shootDownLeft()
 	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
 	game.particle[game.nBullets].velocity[0] = -((rnd() * 2.0)+1); 
 	game.particle[game.nBullets].velocity[1] = -((rnd() * 2.0)+1); 
+        game.particle[game.nBullets].count = 0;
 	game.nBullets++;
 
 
@@ -787,6 +791,7 @@ void shootDownRight()
 	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
 	game.particle[game.nBullets].velocity[0] = ((rnd() * 2.0)+1); 
 	game.particle[game.nBullets].velocity[1] = -((rnd() * 2.0)+1); 
+        game.particle[game.nBullets].count = 0;
 	game.nBullets++;
 
 
@@ -802,6 +807,7 @@ void shootUpLeft()
 	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
 	game.particle[game.nBullets].velocity[0] = -((rnd() * 2.0)+1); 
 	game.particle[game.nBullets].velocity[1] = ((rnd() * 2.0)+1); 
+        game.particle[game.nBullets].count = 0;
 	game.nBullets++;
 
 
@@ -817,6 +823,7 @@ void shootUpRight()
 	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
 	game.particle[game.nBullets].velocity[0] = ((rnd() * 2.0)+1); 
 	game.particle[game.nBullets].velocity[1] = ((rnd() * 2.0)+1); 
+        game.particle[game.nBullets].count = 0;
 	game.nBullets++;
 
 
@@ -832,6 +839,7 @@ void shootLeft()
 	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
 	game.particle[game.nBullets].velocity[0] = -((rnd() * 2.0)+1)*2; 
 	game.particle[game.nBullets].velocity[1] = ((rnd() * .1)+.1)*2; 
+        game.particle[game.nBullets].count = 0;
 	game.nBullets++;
 
 	game.player.lookLeft = true;
@@ -850,7 +858,8 @@ void shootRight()
 	game.particle[game.nBullets].s.center[0] = game.player.pos[0];
 	game.particle[game.nBullets].s.center[1] = game.player.pos[1];
 	game.particle[game.nBullets].velocity[0] = ((rnd() * 2.0)+1)*2; 
-	game.particle[game.nBullets].velocity[1] = ((rnd() * .1)+.1)*2; 
+	game.particle[game.nBullets].velocity[1] = ((rnd() * .1)+.1)*2;
+        game.particle[game.nBullets].count = 0;
 	game.nBullets++;
 
 
@@ -1056,6 +1065,8 @@ void physics(void)
 		
 		game.hitPart[i].s.center[0] -= game.hitPart[i].velocity[0];
 		game.hitPart[i].s.center[1] -= game.hitPart[i].velocity[1];
+
+		game.hitPart[i].count++;
 	}
 	//moves death particles off screen
 	//TODO reuse off screen particles
@@ -1067,6 +1078,12 @@ void physics(void)
 			game.hitPart[i].velocity[1] = 0;
 		//	printf("moving death particle off screen\n");
 		//	game.nHit--;
+		}
+		if (game.hitPart[i].count > 25) {
+			game.hitPart[i].s.center[0] = xReserve;
+			game.hitPart[i].s.center[1] = yReserve;
+			game.hitPart[i].velocity[0] = 0;
+			game.hitPart[i].velocity[1] = 0;
 		}
 
 	}
