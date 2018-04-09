@@ -1063,8 +1063,8 @@ void physics(void)
 	//pulls particles down 
 	for (int i=0; i<game.nHit; i++) {
 		
-		game.hitPart[i].s.center[0] -= game.hitPart[i].velocity[0];
-		game.hitPart[i].s.center[1] -= game.hitPart[i].velocity[1];
+		game.hitPart[i].s.center[0] += game.hitPart[i].velocity[0];
+		game.hitPart[i].s.center[1] += game.hitPart[i].velocity[1];
 
 		game.hitPart[i].count++;
 	}
@@ -1311,14 +1311,14 @@ void physics(void)
 				game.n++;
 				return;
 			} else {
-
-
-			//Spawn death particle 1	
-			game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0];
-			game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-			game.hitPart[game.nHit].velocity[0] = 0;
-			game.hitPart[game.nHit].velocity[1] = 5;
-			game.nHit++;
+			//make sure particle array is not overflown
+			if (game.nHit < 980) {
+				//Spawn death particle 1	
+				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0];
+				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
+				game.hitPart[game.nHit].velocity[0] = -3;
+				game.hitPart[game.nHit].velocity[1] = -3;
+				game.nHit++;
 			//Spawn death particle 2
 	
 		//	game.hitPart[game.nHit+1].s.center[0] = ball[i2].pos[0]-15;
@@ -1328,11 +1328,15 @@ void physics(void)
 		//	game.nHit++;
 			//Spawn death particle 3
 	
-			game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-			game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-			game.hitPart[game.nHit].velocity[0] = 0;
-			game.hitPart[game.nHit].velocity[1] = 5;
-			game.nHit++;
+				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
+				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
+				game.hitPart[game.nHit].velocity[0] = 3;
+				game.hitPart[game.nHit].velocity[1] = 3;
+				game.nHit++;
+			} else {
+
+				game.nHit = 0;
+			}
 
 			
 			//printf("ball[%i] hit sending off screen \n", i2);
