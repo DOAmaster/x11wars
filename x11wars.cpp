@@ -1319,15 +1319,8 @@ void physics(void)
 				game.hitPart[game.nHit].velocity[0] = -3;
 				game.hitPart[game.nHit].velocity[1] = -3;
 				game.nHit++;
-			//Spawn death particle 2
-	
-		//	game.hitPart[game.nHit+1].s.center[0] = ball[i2].pos[0]-15;
-		//	game.hitPart[game.nHit+1].s.center[1] = ball[i2].pos[1]+5;
-		//	game.hitPart[game.nHit+1].velocity[0] = 0;
-		//	game.hitPart[game.nHit+1].velocity[1] = 5;
-		//	game.nHit++;
-			//Spawn death particle 3
-	
+
+				//Spawn death particle 2
 				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
 				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
 				game.hitPart[game.nHit].velocity[0] = 3;
@@ -1350,16 +1343,6 @@ void physics(void)
 			ball[i2].pos[1] = 700;
 			ball[i2].vel[0] = 0;
 			ball[i2].vel[1] = 0;
-		//	if (game.n > 0) {
-			//	ball[i2] = ball[game.n];
-			//	game.n--;
-		//	}
-		//	else if (game.n == 1) {
-
-		//		printf("last ball[%i] hit \n", i2);
-		//		ball[i2] = ball[game.n];
-		//		game.n--;
-		//	}
 		
 			//remove bullet that was hit with ball
 			game.particle[i] = game.particle[game.nBullets-1];
@@ -1410,18 +1393,8 @@ void physics(void)
 		////
 		Flt newx = game.player.pos[0] - ball[i].pos[0];
 		Flt newy = game.player.pos[1] - ball[i].pos[1];
-		if (pow(newx,2) + pow(newy, 2) < pow(ball[i].radius,2)) {
-			
-			//playSound(1);
-		//	printf("Player hit ball\n");
+		if (pow(newx,2) + pow(newy, 2) < pow(ball[i].radius,2)) {	
 			gameOver();
-
-			/*
-			if (game.n > 0) {
-				ball[i2] = ball[game.n-1];
-				game.n--;
-			}
-			*/
 		}
 
 	
@@ -1469,10 +1442,10 @@ void physics(void)
 		//	printf("repositioned reserved ball\n");
 		//
 		//gives random number from 0 - 4
-		int randomPOS = rand()%3;
+		int randomPOS = rand()%7;
 		//debugging
-		//randomPOS = 3;
-		//printf("%d = randomPOS\n", randomPOS);
+		//randomPOS = 4;
+		printf("%d = randomPOS\n", randomPOS);
 		ball[i].radius = 40;
 		
 
@@ -1507,6 +1480,20 @@ void physics(void)
 				ball[i].pos[1] = 0 + ball[i].radius;
 				ball[i].vel[0] = -((rand()%3)+1 * game.level);
 				ball[i].vel[1] = ((rand()%3)+1 * game.level);
+			break;
+			//spawn bottom right mean
+			case 4:
+				ball[i].pos[0] = xres - ball[i].radius;
+				ball[i].pos[1] = 5 + ball[i].radius;
+				ball[i].vel[0] = -((rand()%5)+1 * game.level);
+				ball[i].vel[1] = ((rand()%1)+1 * game.level);
+			break;
+			//spawn bottom right sends to left
+			case 5:
+				ball[i].pos[0] = xres - ball[i].radius;
+				ball[i].pos[1] = 5 + ball[i].radius;
+				ball[i].vel[0] = -((rand()%1) * game.level);
+				ball[i].vel[1] = (.3);
 			break;
 
 		}
@@ -1730,6 +1717,7 @@ void render(void)
 			glTranslatef(game.player.pos[0]-8, game.player.pos[1]+5, game.player.pos[2]);
 		}
 		drawPlayer(game.player.eyeBall2);
+
 		glPopMatrix();
 		//
  		renderBalls();
