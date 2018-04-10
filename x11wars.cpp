@@ -993,48 +993,50 @@ void killBall(void)
 void physics(void)
 {	
 	//shooting key checks
-	
-	if (game.keys[XK_Down] && game.keys[XK_Right]) {
-		shootDownRight();
-	} 
-	if (game.keys[XK_Down] && game.keys[XK_Left]) {
-		shootDownLeft();
-	}
-	if (game.keys[XK_Up] && game.keys[XK_Left]) {
-		shootUpLeft();
-	}
-	if (game.keys[XK_Up] && game.keys[XK_Right]) {
-		shootUpRight();
-	}
-	if (game.keys[XK_Down] ) {
-		shootDown();
-	}
-	if (game.keys[XK_Left] ) {
-		shootLeft();
-	}
-	if (game.keys[XK_Down] ) {
-		shootDown();
-	}
-	if (game.keys[XK_Right] ) {
-		shootRight();
-	}
-	if (game.keys[XK_Up]) {
-		shootUp();
-	}
+	if (game.state == STATE_GAMEPLAY) {	
+	    if (game.keys[XK_Down] && game.keys[XK_Right]) {
+		    shootDownRight();
+	    } 
+	    if (game.keys[XK_Down] && game.keys[XK_Left]) {
+		    shootDownLeft();
+	    }
+	    if (game.keys[XK_Up] && game.keys[XK_Left]) {
+		    shootUpLeft();
+	    }
+	    if (game.keys[XK_Up] && game.keys[XK_Right]) {
+		    shootUpRight();
+	    }
+	    if (game.keys[XK_Down] ) {
+		    shootDown();
+	    }
+	    if (game.keys[XK_Left] ) {
+		    shootLeft();
+	    }
+	    if (game.keys[XK_Down] ) {
+		    shootDown();
+	    }
+	    if (game.keys[XK_Right] ) {
+		    shootRight();
+	    }
+	    if (game.keys[XK_Up]) {
+		    shootUp();
+	    }
 
 
-	//movement key checks
-	if (game.keys[XK_a]) {
-		moveLeft();	
-	}
-	if (game.keys[XK_d]) {
-		moveRight();	
-	}
-	if (game.keys[XK_w]) {
-		moveUp();	
-	}
-	if (game.keys[XK_s]) {
-		moveDown();	
+	    //movement key checks
+	    if (game.keys[XK_a]) {
+		    moveLeft();	
+	    }
+	    if (game.keys[XK_d]) {
+		    moveRight();	
+	    }
+	    if (game.keys[XK_w]) {
+		    moveUp();	
+	    }
+	    if (game.keys[XK_s]) {
+		    moveDown();	
+	    }
+
 	}
 
 	//Update positions mouse ball movement for debuging
@@ -1653,39 +1655,9 @@ void renderBalls(void)
 
 }
 
+void renderPlayer() {
 
-void render(void)
-{
-//	Rect r;
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	if(game.state == STATE_GAMEOVER) {
-
-		game.score = 0;
-
-		glColor3ub(255,255,255);
-
-		//ESC key switches back to STATE_STARTUP
-		//
-		//show gameOver texture
-		//
-
-	
-		glBindTexture(GL_TEXTURE_2D, game.gameOverTexture);
-		glBegin(GL_QUADS);
-			glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
-			glTexCoord2f(0.0f, 0.0f); glVertex2i(0, yres);
-			glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, yres);
-			glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, 0);
-		glEnd();
-
-
-
-	}
-
-	//
-	if(game.state == STATE_GAMEPLAY) {
-
+		
 		//draw player
 		glColor3ub(255,207,13);
 		glPushMatrix();
@@ -1759,25 +1731,45 @@ void render(void)
 
 		glPopMatrix();
 		//
- 		renderBalls();
+	
 
-		//game new enemy spawner depending on level and enemy number
-		//TODO redone this logic later
-		/*
-		if (game.level == 1 && game.n < 3) {
+}
 
-			//add new ball enemy to off screen spawner reserve 
-			ball[game.n+1].pos[0] = xReserve;
-			ball[game.n+1].pos[1] = yReserve;
-			ball[game.n+1].vel[0] = 0.0;
-			ball[game.n+1].vel[1] = 0.0;
-			ball[game.n+1].radius = 40.0;
-			ball[game.n+1].mass = sphereVolume(ball[0].radius);
-			ball[game.n+1].split = false;
-			game.n++;
-		}
-		*/
 
+void render(void)
+{
+//	Rect r;
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	if(game.state == STATE_GAMEOVER) {
+
+		game.score = 0;
+
+		glColor3ub(255,255,255);
+
+		//ESC key switches back to STATE_STARTUP
+		//
+		//show gameOver texture
+		//
+
+	
+		glBindTexture(GL_TEXTURE_2D, game.gameOverTexture);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex2i(0, yres);
+			glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, yres);
+			glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, 0);
+		glEnd();
+
+
+
+	}
+
+	//
+	if(game.state == STATE_GAMEPLAY) {
+
+	    	renderPlayer();
+	 	renderBalls();
 
 		//game level 
 		if (game.score == 0) {
@@ -1843,6 +1835,8 @@ void render(void)
 	}
 	if(game.state == STATE_STARTUP) {
 
+	    	renderPlayer();
+
 		//clears the rendering of balls
 		game.n = 0;		
 
@@ -1860,8 +1854,8 @@ void render(void)
 		clearBalls();
 
 		glColor3ub(255,255,255);
+
 		//show title menu texture
-	//	glBindTexture(GL_TEXTURE_2D, game.titleTexture);
 		glBindTexture(GL_TEXTURE_2D, game.titleTextureTrans);
                 glEnable(GL_ALPHA_TEST);
                 glAlphaFunc(GL_GREATER, 0.0f);
@@ -1871,7 +1865,8 @@ void render(void)
 			glTexCoord2f(0.0f, 0.0f); glVertex2i(0, yres);
 			glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, yres);
 			glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, 0);
-		glEnd();	
+		glEnd();
+		//be sure to use glBindTeture with 0 to unbind the texture to draw more	
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glDisable(GL_ALPHA_TEST);
 
