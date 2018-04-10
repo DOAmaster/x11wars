@@ -201,10 +201,13 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[2] = {
+Image img[3] = {
 "./title.jpg",
-"./gameover.jpg" };
+"./gameover.jpg",
+"./titletrans.gif"
+};
 
+//alpha color yellow (255, 255, 100)
 unsigned char *buildAlphaData(Image *img)
 {
 	//add 4th component to RGB stream...
@@ -233,7 +236,11 @@ unsigned char *buildAlphaData(Image *img)
 		//*(ptr+3) = d;
 		//-----------------------------------------------
 		//this code optimizes the commented code above.
-		*(ptr+3) = (a|b|c);
+		if(a==255 && b==255 && c==100) {
+			*(ptr+3) = 0;
+		}else {
+			*(ptr+3) = 1;
+		}
 		//-----------------------------------------------
 		ptr += 4;
 		data += 3;
@@ -394,6 +401,7 @@ class Game {
 	//texures
 	GLuint gameOverTexture;
 	GLuint titleTexture;
+	GLuint titleTextureTrans;
 
 	State state;
 	bool spawner;
@@ -500,6 +508,10 @@ void reshape_window(int width, int height)
 	x11.set_title();
 }
 
+//alpha building from walk framework
+#define ALPHA 1
+
+
 void init_opengl(void)
 {
 	//OpenGL initialization
@@ -521,6 +533,7 @@ void init_opengl(void)
 	//create opengl texture elements
 	glGenTextures(1, &game.titleTexture);	
 	glGenTextures(1, &game.gameOverTexture);
+	glGenTextures(1, &game.titleTextureTrans);
 
 	//title image
 	glBindTexture(GL_TEXTURE_2D, game.titleTexture);
@@ -540,6 +553,31 @@ void init_opengl(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, 3,
 		img[1].width, img[1].height,
 		0, GL_RGB, GL_UNSIGNED_BYTE, img[1].data);
+
+
+
+	//title image transparent
+	//
+
+        //must build a new set of data...
+	//send to alpha data, then use GL_RBG_a, check walk and rainforest frameworks for examples
+	glBindTexture(GL_TEXTURE_2D, game.titleTextureTrans);
+
+       	unsigned char *walkData = buildAlphaData(&img[2]);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img[2].width, img[2].height, 0,
+        	GL_RGBA, GL_UNSIGNED_BYTE, walkData);
+
+	
+	//
+	/*
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+		img[2].width, img[2].height,
+		0, GL_RGB, GL_UNSIGNED_BYTE, img[2].data);
+	*/
+
+	delete walkData;
 
 }
 
@@ -1194,7 +1232,7 @@ void physics(void)
 			//check of not in reserve pile
 			if (ball[i].pos[0] != 900 && ball[i].pos[1] != 700) {
 				ball[i].vel[0] = -ball[i].vel[0];
-				printf("ball hit edge\n");
+				//printf("ball hit edge\n");
 				hit = true;
 				//ball[i] = ball[game.n];
 				//	game.n--;
@@ -1205,7 +1243,7 @@ void physics(void)
 
 			if (ball[i].pos[0] != 900 && ball[i].pos[1] != 700) {
 				ball[i].vel[0] = -ball[i].vel[0];
-				printf("ball hit edge\n");
+				//printf("ball hit edge\n");
 				hit = true;
 				//	ball[i] = ball[game.n];
 				//	game.n--;
@@ -1217,7 +1255,7 @@ void physics(void)
 
 			if (ball[i].pos[1] != 700 && ball[i].pos[0] != 900) {
 			ball[i].vel[1] = -ball[i].vel[1];
-			printf("ball hit edge\n");
+			//printf("ball hit edge\n");
 			hit = true;
 			//	ball[i] = ball[game.n];
 			//	game.n--;
@@ -1229,7 +1267,7 @@ void physics(void)
 		
 			if (ball[i].pos[1] != 700 && ball[i].pos[0] != 900) {
 				ball[i].vel[1] = -ball[i].vel[1];
-				printf("ball hit edge\n");
+			//	printf("ball hit edge\n");
 				hit = true;
 			//	ball[i] = ball[game.n];
 			//	game.n--;		
@@ -1442,7 +1480,7 @@ void physics(void)
 		//	printf("repositioned reserved ball\n");
 		//
 		//gives random number from 0 - 4
-		int randomPOS = rand()%7;
+		int randomPOS = rand()%6;
 		//debugging
 		//randomPOS = 4;
 		printf("%d = randomPOS\n", randomPOS);
@@ -1631,7 +1669,8 @@ void render(void)
 		//
 		//show gameOver texture
 		//
-		
+
+	
 		glBindTexture(GL_TEXTURE_2D, game.gameOverTexture);
 		glBegin(GL_QUADS);
 			glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
@@ -1817,20 +1856,25 @@ void render(void)
 		game.player.eyeBall1 = 2;
 		game.player.eyeBall2 = 2;
 
+		clearBullets();
+		clearBalls();
 
 		glColor3ub(255,255,255);
 		//show title menu texture
-		glBindTexture(GL_TEXTURE_2D, game.titleTexture);
+	//	glBindTexture(GL_TEXTURE_2D, game.titleTexture);
+		glBindTexture(GL_TEXTURE_2D, game.titleTextureTrans);
+                glEnable(GL_ALPHA_TEST);
+                glAlphaFunc(GL_GREATER, 0.0f);
+
 		glBegin(GL_QUADS);
 			glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
 			glTexCoord2f(0.0f, 0.0f); glVertex2i(0, yres);
 			glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, yres);
 			glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, 0);
-		glEnd();
-	
+		glEnd();	
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDisable(GL_ALPHA_TEST);
 
-		clearBullets();
-		clearBalls();
 
 		/*
 		//show text box
