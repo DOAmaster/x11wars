@@ -37,7 +37,7 @@ typedef Flt Vec[3];
 #define VecCopy2d(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];
 #define VecNegate2d(a) (a)[0]=(-(a)[0]); (a)[1]=(-(a)[1]);
 #define VecDot2d(a,b) ((a)[0]*(b)[0]+(a)[1]*(b)[1])
-#define MAX_PARTICLES 1000
+#define MAX_PARTICLES 10000
 #define GRAVITY 0.1
 #define PI 3.141592653589793
 
@@ -990,6 +990,120 @@ void killBall(void)
 
 }
 
+void killEffect(int posx, int posy) 
+{
+    if(game.nHit < MAX_PARTICLES) {
+			    //Spawn death particle 1	
+			    game.hitPart[game.nHit].s.center[0] = posx;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = -3;
+			    game.hitPart[game.nHit].velocity[1] = -3;
+			    game.nHit++;
+
+			    //Spawn death particle 2
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = 3;
+			    game.hitPart[game.nHit].velocity[1] = 3;
+			    game.nHit++;
+
+			    //Spawn death particle 3
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = -2;
+			    game.hitPart[game.nHit].velocity[1] = -2;
+			    game.nHit++;
+			    //Spawn death particle 4
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = 2;
+			    game.hitPart[game.nHit].velocity[1] = 2;
+			    game.nHit++;
+			    //Spawn death particle 5
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = -5;
+			    game.hitPart[game.nHit].velocity[1] = -5;
+			    game.nHit++;
+			    //Spawn death particle 6
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = 5;
+			    game.hitPart[game.nHit].velocity[1] = 5;
+			    game.nHit++;
+
+			    //Spawn death particle 7
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = -6;
+			    game.hitPart[game.nHit].velocity[1] = -6;
+			    game.nHit++;
+			    //Spawn death particle 8
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = 6;
+			    game.hitPart[game.nHit].velocity[1] = 6;
+			    game.nHit++;
+			    
+			    //start of top left bottom right
+			    //Spawn death particle 9	
+			    game.hitPart[game.nHit].s.center[0] = posx;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = 3;
+			    game.hitPart[game.nHit].velocity[1] = -3;
+			    game.nHit++;
+
+			    //Spawn death particle 10
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = -3;
+			    game.hitPart[game.nHit].velocity[1] = 3;
+			    game.nHit++;
+
+			    //Spawn death particle 11
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = 2;
+			    game.hitPart[game.nHit].velocity[1] = -2;
+			    game.nHit++;
+			    //Spawn death particle 12
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = 2;
+			    game.hitPart[game.nHit].velocity[1] = -2;
+			    game.nHit++;
+			    //Spawn death particle 13
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = 5;
+			    game.hitPart[game.nHit].velocity[1] = -5;
+			    game.nHit++;
+			    //Spawn death particle 14
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = -5;
+			    game.hitPart[game.nHit].velocity[1] = 5;
+			    game.nHit++;
+
+			    //Spawn death particle 15
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = 6;
+			    game.hitPart[game.nHit].velocity[1] = -6;
+			    game.nHit++;
+			    //Spawn death particle 16
+			    game.hitPart[game.nHit].s.center[0] = posx+14;
+			    game.hitPart[game.nHit].s.center[1] = posy;
+			    game.hitPart[game.nHit].velocity[0] = -6;
+			    game.hitPart[game.nHit].velocity[1] = 6;
+			    game.nHit++;
+    } else {
+	game.nHit = 0;
+    }
+
+
+}
+
 void physics(void)
 {	
 	//shooting key checks
@@ -1354,114 +1468,8 @@ void physics(void)
 			} else {
 			//make sure particle array is not overflown
 			//spawn a ton of particles!
-			if (game.nHit < 980) {
-				//Spawn death particle 1	
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0];
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = -3;
-				game.hitPart[game.nHit].velocity[1] = -3;
-				game.nHit++;
+			    	killEffect(ball[i2].pos[0], ball[i2].pos[1]);
 
-				//Spawn death particle 2
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = 3;
-				game.hitPart[game.nHit].velocity[1] = 3;
-				game.nHit++;
-
-				//Spawn death particle 3
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = -2;
-				game.hitPart[game.nHit].velocity[1] = -2;
-				game.nHit++;
-				//Spawn death particle 4
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = 2;
-				game.hitPart[game.nHit].velocity[1] = 2;
-				game.nHit++;
-				//Spawn death particle 5
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = -5;
-				game.hitPart[game.nHit].velocity[1] = -5;
-				game.nHit++;
-				//Spawn death particle 6
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = 5;
-				game.hitPart[game.nHit].velocity[1] = 5;
-				game.nHit++;
-
-				//Spawn death particle 7
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = -6;
-				game.hitPart[game.nHit].velocity[1] = -6;
-				game.nHit++;
-				//Spawn death particle 8
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = 6;
-				game.hitPart[game.nHit].velocity[1] = 6;
-				game.nHit++;
-				
-				//start of top left bottom right
-				//Spawn death particle 9	
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0];
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = 3;
-				game.hitPart[game.nHit].velocity[1] = -3;
-				game.nHit++;
-
-				//Spawn death particle 10
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = -3;
-				game.hitPart[game.nHit].velocity[1] = 3;
-				game.nHit++;
-
-				//Spawn death particle 11
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = 2;
-				game.hitPart[game.nHit].velocity[1] = -2;
-				game.nHit++;
-				//Spawn death particle 12
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = 2;
-				game.hitPart[game.nHit].velocity[1] = -2;
-				game.nHit++;
-				//Spawn death particle 13
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = 5;
-				game.hitPart[game.nHit].velocity[1] = -5;
-				game.nHit++;
-				//Spawn death particle 14
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = -5;
-				game.hitPart[game.nHit].velocity[1] = 5;
-				game.nHit++;
-
-				//Spawn death particle 15
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = 6;
-				game.hitPart[game.nHit].velocity[1] = -6;
-				game.nHit++;
-				//Spawn death particle 16
-				game.hitPart[game.nHit].s.center[0] = ball[i2].pos[0]+14;
-				game.hitPart[game.nHit].s.center[1] = ball[i2].pos[1];
-				game.hitPart[game.nHit].velocity[0] = -6;
-				game.hitPart[game.nHit].velocity[1] = 6;
-				game.nHit++;
-			} else {
-
-				game.nHit = 0;
 			}
 
 			
@@ -1483,7 +1491,7 @@ void physics(void)
 			}
 		}
 
-	}
+	
 
 
 	}
@@ -1904,25 +1912,6 @@ void render(void)
 			glPopMatrix();
 
 		}
-		//render hitpart death particles from balls
-		if(game.nHit > 0) {
-			for (int i = 0; i < game.nHit; i++) {
-				glPushMatrix();
-				glColor3ub(255,255,255);
-				w = 2;
-				h = 2;
-				glBegin(GL_QUADS);
-				glVertex2i(game.hitPart[i].s.center[0]-w, game.hitPart[i].s.center[1]-h);
-				glVertex2i(game.hitPart[i].s.center[0]-w, game.hitPart[i].s.center[1]+h);
-				glVertex2i(game.hitPart[i].s.center[0]+w, game.hitPart[i].s.center[1]+h);
-				glVertex2i(game.hitPart[i].s.center[0]+w, game.hitPart[i].s.center[1]-h);
-				glEnd();
-				glPopMatrix();
-			}
-		}
-
-	
-
 
 
 	}
@@ -1948,7 +1937,15 @@ void render(void)
 
 		glColor3ub(255,255,255);
 
+		
+		int randomX = rand()%800;
+		int randomY = rand()%600;
+		killEffect(randomX, randomY);
+
+
 		//show title menu texture
+		glEnable(GL_BLEND);
+
 		glBindTexture(GL_TEXTURE_2D, game.titleTextureTrans);
                 glEnable(GL_ALPHA_TEST);
                 glAlphaFunc(GL_GREATER, 0.0f);
@@ -1961,7 +1958,7 @@ void render(void)
 		glEnd();
 		//be sure to use glBindTeture with 0 to unbind the texture to draw more	
 		glBindTexture(GL_TEXTURE_2D, 0);
-		glDisable(GL_ALPHA_TEST);
+
 
 
 		/*
@@ -1978,6 +1975,24 @@ void render(void)
 		ggprint8b(&r, 16, 0x0000000, "P - Quit");
 		*/
 	}
+
+		//render hitpart death particles from balls
+		//if(game.nHit > 0) {
+		    float h, w;
+			for (int i = 0; i < game.nHit; i++) {
+				glPushMatrix();
+				glColor3ub(255,255,255);
+				w = 2;
+				h = 2;
+				glBegin(GL_QUADS);
+				glVertex2i(game.hitPart[i].s.center[0]-w, game.hitPart[i].s.center[1]-h);
+				glVertex2i(game.hitPart[i].s.center[0]-w, game.hitPart[i].s.center[1]+h);
+				glVertex2i(game.hitPart[i].s.center[0]+w, game.hitPart[i].s.center[1]+h);
+				glVertex2i(game.hitPart[i].s.center[0]+w, game.hitPart[i].s.center[1]-h);
+				glEnd();
+				glPopMatrix();
+			}
+	//	}
 
 
 }
