@@ -37,7 +37,7 @@ typedef Flt Vec[3];
 #define VecCopy2d(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];
 #define VecNegate2d(a) (a)[0]=(-(a)[0]); (a)[1]=(-(a)[1]);
 #define VecDot2d(a,b) ((a)[0]*(b)[0]+(a)[1]*(b)[1])
-#define MAX_PARTICLES 1000
+#define MAX_PARTICLES 10000
 #define GRAVITY 0.1
 #define PI 3.141592653589793
 
@@ -1945,7 +1945,7 @@ void render(void)
 		
 		int randomX = rand()%800;
 		int randomY = rand()%600;
-		if(game.nHit < 5000) {
+		if(game.nHit < MAX_PARTICLES) {
 			killEffect(randomX, randomY);
 		}else{
 			game.nHit = 0;
