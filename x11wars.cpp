@@ -37,7 +37,7 @@ typedef Flt Vec[3];
 #define VecCopy2d(a,b) (b)[0]=(a)[0];(b)[1]=(a)[1];
 #define VecNegate2d(a) (a)[0]=(-(a)[0]); (a)[1]=(-(a)[1]);
 #define VecDot2d(a,b) ((a)[0]*(b)[0]+(a)[1]*(b)[1])
-#define MAX_PARTICLES 10000
+#define MAX_PARTICLES 1000
 #define GRAVITY 0.1
 #define PI 3.141592653589793
 
@@ -992,7 +992,7 @@ void killBall(void)
 
 void killEffect(int posx, int posy) 
 {
-    if(game.nHit < MAX_PARTICLES) {
+    if(game.nHit < MAX_PARTICLES-20) {
 			    //Spawn death particle 1	
 			    game.hitPart[game.nHit].s.center[0] = posx;
 			    game.hitPart[game.nHit].s.center[1] = posy;
@@ -1105,7 +1105,10 @@ void killEffect(int posx, int posy)
 }
 
 void physics(void)
-{	
+{
+	//debugging statments
+	printf("nHits = %i\n", game.nHit);
+
 	//shooting key checks
 	if (game.state == STATE_GAMEPLAY) {	
 	    if (game.keys[XK_Down] && game.keys[XK_Right]) {
@@ -1238,6 +1241,7 @@ void physics(void)
 			game.hitPart[i].s.center[1] = yReserve;
 			game.hitPart[i].velocity[0] = 0;
 			game.hitPart[i].velocity[1] = 0;
+			game.hitPart[i].count = 0;
 		}
 
 	}
@@ -1868,7 +1872,8 @@ void render(void)
 
 	//
 	if(game.state == STATE_GAMEPLAY) {
-
+			    
+	
 	    	renderPlayer();
 	 	renderBalls();
 
@@ -1940,7 +1945,11 @@ void render(void)
 		
 		int randomX = rand()%800;
 		int randomY = rand()%600;
-		killEffect(randomX, randomY);
+		if(game.nHit < 5000) {
+			killEffect(randomX, randomY);
+		}else{
+			game.nHit = 0;
+		}
 
 
 		//show title menu texture
