@@ -62,11 +62,13 @@ struct Shape {
 
 };
 
+
 struct Particle {
 	Shape s;
 	Vec velocity;
 	int count;
 };
+
 
 class Bullet {
     public:
@@ -330,6 +332,7 @@ int lbumphigh=0;
 
 void init_opengl(void);
 void init_balls(void);
+void init_boxes(void);
 void check_resize(XEvent *e);
 void check_mouse(XEvent *e);
 void check_keys(XEvent *e);
@@ -339,6 +342,20 @@ void render(void);
 int done=0;
 int leftButtonDown=0;
 Vec leftButtonPos;
+
+class Box {
+public:
+	Vec pos;
+	Vec vel;
+	Vec force;
+	Shape s;
+	float radius;
+	float mass;
+	float angle;
+	bool split;
+	Particle particle[3];
+} box[100];
+
 class Ball {
 public:
 	Vec pos;
@@ -392,6 +409,7 @@ class Game {
 	Particle hitPart[MAX_PARTICLES];
 	int n;
 	int nBullets;
+	int nBoxes;
 	int maxBullets;
 	int nHit;
 	int score;
@@ -408,6 +426,7 @@ class Game {
 	unsigned char keys[65535];
 
 	Game(){
+	    	nBoxes = 0;
 		level = 0;
 		score = 0;
 	    	state = STATE_STARTUP;
@@ -460,6 +479,7 @@ int main(void)
 {
 	init_opengl();
 	init_balls();
+	init_boxes();
 	clock_gettime(CLOCK_REALTIME, &timePause);
 	clock_gettime(CLOCK_REALTIME, &timeStart);
 
@@ -582,6 +602,20 @@ void init_opengl(void)
 }
 
 #define sphereVolume(r) (r)*(r)*(r)*3.14159265358979*4.0/3.0;
+
+
+void init_boxes(void)
+{
+
+    	box[0].pos[0] = 200;
+	box[0].pos[1] = yres-150;
+	box[0].vel[0] = 0.0;
+	box[0].vel[1] = 0.0;
+	box[0].radius = 30.0;
+	game.nBoxes++;
+
+
+}
 
 void init_balls(void)
 {
@@ -1107,7 +1141,7 @@ void killEffect(int posx, int posy)
 void physics(void)
 {
 	//debugging statments
-	printf("nHits = %i\n", game.nHit);
+	//printf("nHits = %i\n", game.nHit);
 
 	//shooting key checks
 	if (game.state == STATE_GAMEPLAY) {	
@@ -1209,7 +1243,15 @@ void physics(void)
 	}
 	*/
 
-	//Different physics applied here...
+	//boxes physics
+	for (int i=0; i<game.nBoxes; i++) {
+
+		//moves ball via vel
+		box[i].pos[0] += box[i].vel[0];
+		box[i].pos[1] += box[i].vel[1];
+	}
+
+	//ball physics
 	for (int i=0; i<game.n; i++) {
 
 		//moves ball via vel
@@ -1679,6 +1721,35 @@ void physics(void)
 
 }
 
+
+void drawBox(Flt rad)
+{
+	int i;
+	static int firsttime3=1;
+	static Flt verts[32][2];
+	static int n=32;
+
+
+	if (firsttime3) {
+		Flt ang=0.0;
+		Flt inc = 3.14159 * 2.0 / (Flt)n;
+		for (i=0; i<n; i++) {
+			verts[i][0] = sin(ang);
+			verts[i][1] = cos(ang);
+			ang += inc;
+		}
+		firsttime3=0;
+	}
+	/*
+	glBegin(GL_TRIANGLE_FAN);
+		for (i=0; i<n; i++) {
+			glVertex2f(verts[i][0]*rad, verts[i][1]*rad);
+		}
+	*/
+
+	//glDisable(GL_BLEND);
+}
+
 void drawBall(Flt rad)
 {
 	int i;
@@ -1741,6 +1812,34 @@ void drawPlayer(Flt rad)
 			glVertex2f(vertsEye1[i][0]*rad/2, vertsEye1[i][1]*rad/2);
 		}
 	glEnd();
+
+}
+
+
+void renderBoxes(void)
+{
+
+	float h = 100.0;
+	float w = 200.0;
+
+	for(int i=0; i < game.nBoxes; i++) {
+	//draw balls
+	glColor3ub(0,255,0);
+	glPushMatrix();
+	glTranslatef(box[i].pos[0], box[i].pos[1], box[i].pos[2]);
+//	drawBall(box[i].radius);
+
+	glBegin(GL_QUADS);
+		glVertex2i(-w, -h);
+		glVertex2i(-w, h);
+		glVertex2i( w, h);
+		glVertex2i( w, -h);
+	glEnd();
+
+	glPopMatrix();
+	//
+	
+	}
 
 }
 
@@ -1876,6 +1975,9 @@ void render(void)
 	
 	    	renderPlayer();
 	 	renderBalls();
+		renderBoxes();
+
+
 
 		//game level 
 		if (game.score == 0) {
@@ -1922,6 +2024,15 @@ void render(void)
 	}
 	if(game.state == STATE_STARTUP) {
 
+		
+		int randomX = rand()%800;
+		int randomY = rand()%600;
+		if(game.nHit < MAX_PARTICLES) {
+			killEffect(randomX, randomY);
+		}else{
+			game.nHit = 0;
+		}
+
 	    	renderPlayer();
 
 		//clears the rendering of balls
@@ -1942,14 +2053,7 @@ void render(void)
 
 		glColor3ub(255,255,255);
 
-		
-		int randomX = rand()%800;
-		int randomY = rand()%600;
-		if(game.nHit < MAX_PARTICLES) {
-			killEffect(randomX, randomY);
-		}else{
-			game.nHit = 0;
-		}
+
 
 
 		//show title menu texture
@@ -1967,6 +2071,8 @@ void render(void)
 		glEnd();
 		//be sure to use glBindTeture with 0 to unbind the texture to draw more	
 		glBindTexture(GL_TEXTURE_2D, 0);
+
+
 
 
 
