@@ -1709,17 +1709,20 @@ void physics(void)
 
 		//
 		//finds position of particle postion against the balls
-		Flt newx = game.particle[i].s.center[0] - box[i3].pos[0];
-		Flt newy = game.particle[i].s.center[1] - box[i3].pos[1];
+	//	Flt newx = game.particle[i].s.center[0] - box[i3].pos[0];
+	//	Flt newy = game.particle[i].s.center[1] - box[i3].pos[1];
+		Flt newx = game.particle[i].s.center[0];
+		Flt newy = game.particle[i].s.center[1];
 		Flt area = newx * newy;
 		Flt distance = newx * newx;
 		Flt distance2 = newy * newy;
 		//
 		//BULLET HIT BALL
 		//TODO fix bullet collion with box
-		if (distance < box[i3].center[0]) {
+		//currently broken only clears box when bullet is to the left of it
+		if (distance < box[i3].pos[0]) {
 		//	ball[i2].vel[0] = -ball[i2].vel[0];
-			if (distance2 < box[i3].center[1]) {
+			if (distance2 < box[i3].pos[1]) {
 			playSound(1);
 
 			//debugging
@@ -1748,9 +1751,6 @@ void physics(void)
 			//spawn a ton of particles!
 			    	killEffect(box[i3].pos[0], box[i3].pos[1]);
 
-			}
-
-			
 			//printf("ball[%i] hit sending off screen \n", i2);
 			//remove ball that was hit
 			game.score = game.score + 1;
@@ -1766,6 +1766,10 @@ void physics(void)
 			//remove bullet that was hit with ball
 			game.particle[i] = game.particle[game.nBullets-1];
 			game.nBullets--;
+
+			}
+
+			
 			}
 		}
 	
