@@ -46,6 +46,28 @@ typedef Flt Vec[3];
 #define yReserve 700;
 
 
+//-----------------------------------------------------------------------------
+
+int xres=640, yres=480;
+int xres3, xres4;
+unsigned char *screendata = NULL;
+void setup_screen_res(const int w, const int h)
+{
+        xres = w;
+        yres = h;
+        xres3 = xres * 3;
+        xres4 = xres * 4;
+        if (screendata)
+                delete [] screendata;
+        screendata = new unsigned char[yres * xres4];
+}
+
+
+
+//-----------------------------------------------------------------------------
+
+
+
 //X Windows variables
 Display *dpy;
 Window win;
@@ -59,7 +81,7 @@ Flt pos[3]={20.0,200.0,0.0};
 const float gravity = 0.2f;
 const int MAX_BULLETS = 11;
 
-static int xres=800, yres=600;
+//static int xres=800, yres=600;
 void setup_screen_res(const int w, const int h);
 //void showFrameRate();
 
@@ -106,6 +128,8 @@ int xxGetTicks() {
         return (int)((end.tv_sec - gamestarttv.tv_sec) * 1000 +
                 (end.tv_usec - gamestarttv.tv_usec) * oothousand) + 0.5;
 }
+//end of timer stuff
+//-----------------------------------------------------------
 
 
 void initXWindows(int w, int h)
@@ -557,8 +581,6 @@ double timeDiff(struct timespec *start, struct timespec *end) {
 void timeCopy(struct timespec *dest, struct timespec *source) {
 	memcpy(dest, source, sizeof(struct timespec));
 }
-//-----------------------------------------------------------------------------
-
 
 void showFrameRate()
 {
@@ -601,7 +623,7 @@ int main(int argc, char *argv[])
 //	game.n=0;
 	gettimeofday(&gamestarttv, NULL);
 	
-	//initXWindows(0, 0);
+//	initXWindows(800, 600);
 
 	while (!done) {
 		while (x11.getPending()) {
@@ -627,11 +649,6 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void setup_screen_res(const int w, const int h)
-{
-	xres = w;
-	yres = h;
-}
 
 void reshape_window(int width, int height)
 {
@@ -726,8 +743,8 @@ void init_boxes(void)
 
     	box[0].pos[0] = 200;
 	box[0].pos[1] = yres-150;
-	box[0].vel[0] = 0.0;
-	box[0].vel[1] = 0.0;
+	box[0].vel[0] = -1.0;
+	box[0].vel[1] = -1.0;
 	box[0].radius = 30.0;
 	game.nBoxes++;
 
@@ -1499,7 +1516,80 @@ void physics(void)
 		}
 	}
 
+	//check off screen boxes
+	bool hit2 = false;
+	for (int i=0; i<game.nBoxes; i++) {
+		//BALL COLLIONS WITH WALLS
+		//
+		//
+		//ball[i].pos[0] == 900 && ball[i].pos[1] == 700
+		//check balls against window edges
+		if (box[i].pos[0] < box[i].radius && box[i].vel[0] <= 0.0) {
+			//check of not in reserve pile
+			if (box[i].pos[0] != 900 && box[i].pos[1] != 700) {
+				box[i].vel[0] = -box[i].vel[0];
+				//printf("ball hit edge\n");
+				hit2 = true;
+				//ball[i] = ball[game.n];
+				//	game.n--;
+				playSound(1);
+			}
+		}
+		if (box[i].pos[0] >= (Flt)xres-box[i].radius && box[i].vel[0] >= 0.0) {
+
+			if (box[i].pos[0] != 900 && box[i].pos[1] != 700) {
+				box[i].vel[0] = -box[i].vel[0];
+				//printf("ball hit edge\n");
+				hit2 = true;
+				//	ball[i] = ball[game.n];
+				//	game.n--;
+				//printf("ball hit edge\n");
+				playSound(1);
+			}
+		}
+		if (box[i].pos[1] < box[i].radius && box[i].vel[1] <= 0.0) {
+
+			if (box[i].pos[1] != 700 && box[i].pos[0] != 900) {
+			box[i].vel[1] = -box[i].vel[1];
+			//printf("ball hit edge\n");
+			hit2 = true;
+			//	ball[i] = ball[game.n];
+			//	game.n--;
+			//printf("ball hit edge\n");
+			playSound(1);
+			}
+		}
+		if (box[i].pos[1] >= (Flt)yres-box[i].radius + 100 && box[i].vel[1] >= 0.0) {
+		
+			if (box[i].pos[1] != 700 && box[i].pos[0] != 900) {
+				box[i].vel[1] = -box[i].vel[1];
+			//	printf("ball hit edge\n");
+				hit2 = true;
+			//	ball[i] = ball[game.n];
+			//	game.n--;		
+			//	printf("ball hit edge\n");
+				playSound(1);
+		}
+
+		if(hit2) {
+		//	ball[i] = ball[game.n-1];
+			box[i].pos[0] = 900;
+			box[i].pos[1] = 700;
+			box[i].vel[0] = 0;
+			box[i].vel[1] = 0;
+			printf("moving box off screen\n");
+			hit2 = false;
+			
+		}
+		
+
+	}
+	}
+
+
 	bool hit = false;
+
+
 
 	//check off screen balls
 	for (int i=0; i<game.n; i++) {
@@ -1936,8 +2026,8 @@ void drawPlayer(Flt rad)
 void renderBoxes(void)
 {
 
-	float h = 100.0;
-	float w = 200.0;
+	float h = 25.0;
+	float w = 25.0;
 
 	for(int i=0; i < game.nBoxes; i++) {
 	//draw balls
