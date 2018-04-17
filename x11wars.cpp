@@ -9,6 +9,7 @@
 // libglew1.6
 // libglew1.6-dev
 //
+#include <sys/time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,6 +46,14 @@ typedef Flt Vec[3];
 #define yReserve 700;
 
 
+//X Windows variables
+Display *dpy;
+Window win;
+GLXContext glc;
+
+Flt pos[3]={20.0,200.0,0.0};
+
+
 
 //might use for future ai 
 const float gravity = 0.2f;
@@ -52,7 +61,7 @@ const int MAX_BULLETS = 11;
 
 static int xres=800, yres=600;
 void setup_screen_res(const int w, const int h);
-
+//void showFrameRate();
 
 struct Shape {
 
@@ -81,6 +90,81 @@ class Bullet {
 
 };
 
+//show fps component
+//setup timers-------------------------------
+const double oothousand = 1.0 / 1000.0;
+struct timeval gamestarttv;
+//My version of GetTickCount() or SDL_GetTicks()
+int xxGetTicks() {
+        struct timeval end;
+        gettimeofday(&end, NULL);
+        //long seconds  = end.tv_sec  - gamestarttv.tv_sec;
+        //long useconds = end.tv_usec - gamestarttv.tv_usec;
+        //long mtime = (seconds*1000 + useconds*oothousand) + 0.5;
+        //return (int)mtime;
+        //code above compressed...
+        return (int)((end.tv_sec - gamestarttv.tv_sec) * 1000 +
+                (end.tv_usec - gamestarttv.tv_usec) * oothousand) + 0.5;
+}
+
+
+void initXWindows(int w, int h)
+{
+        //Fullscreen implementation
+        //usage:
+        //   for fullscreen call: initXWindows(0, 0);
+        //   for windowed call: initXWindows(640, 480);
+        //                      initXWindows(1024, 768);
+        //                      etc.
+        //
+        GLint att[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
+        dpy = XOpenDisplay(NULL);
+        //Screen *s = DefaultScreenOfDisplay(dpy);
+        if (dpy == NULL) {
+                printf("ERROR: cannot connect to X server!\n"); fflush(stdout);
+                exit(EXIT_FAILURE);
+        }
+        Window root = DefaultRootWindow(dpy);
+        //for fullscreen
+        XWindowAttributes getWinAttr;
+    XGetWindowAttributes(dpy, root, &getWinAttr);
+        int fullscreen = 0;
+        xres = w;
+        yres = h;
+        if (!w && !h) {
+                //Go to fullscreen.
+                xres = getWinAttr.width;
+                yres = getWinAttr.height;
+                printf("getWinAttr: %i %i\n", w, h); fflush(stdout);
+                //When window is fullscreen, there is no client window
+                //so keystrokes are linked to the root window.
+                XGrabKeyboard(dpy, root, False,
+                        GrabModeAsync, GrabModeAsync, CurrentTime);
+                fullscreen = 1;
+        }
+        XVisualInfo *vi = glXChooseVisual(dpy, 0, att);
+        if (vi == NULL) {
+                printf("ERROR: no appropriate visual found\n"); fflush(stdout);
+                exit(EXIT_FAILURE);
+        }
+        Colormap cmap = XCreateColormap(dpy, root, vi->visual, AllocNone);
+        XSetWindowAttributes swa;
+        swa.colormap = cmap;
+        //List your desired events here.
+        swa.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask |
+                StructureNotifyMask | SubstructureNotifyMask;
+        unsigned int winops = CWBorderPixel|CWColormap|CWEventMask;
+        if (fullscreen) {
+                winops |= CWOverrideRedirect;
+                swa.override_redirect = True;
+        }
+        printf("2 getWinAttr: %i %i\n", w, h); fflush(stdout);
+        win = XCreateWindow(dpy, root, 0, 0, xres, yres, 0,
+                vi->depth, InputOutput, vi->visual, winops, &swa);
+        glc = glXCreateContext(dpy, vi, NULL, GL_TRUE);
+        glXMakeCurrent(dpy, win, glc);
+        //set_title();
+}
 
 
 class X11_wrapper {
@@ -457,6 +541,7 @@ void makeParticle(int x, int y)
 	game.nBullets++;
 }
 
+int showOpengl = 0;
 
 //Setup timers
 const double physicsRate = 1.0 / 60.0;
@@ -475,7 +560,26 @@ void timeCopy(struct timespec *dest, struct timespec *source) {
 //-----------------------------------------------------------------------------
 
 
-int main(void)
+void showFrameRate()
+{
+        static int count=0;
+        static int lastt = xxGetTicks();
+        if (++count >= 32) {
+                int diff = xxGetTicks() - lastt;
+                //32 frames took diff 1/1000 seconds.
+                //how much did 1 frame take?
+                float secs = (float)diff / 1000.0;
+                //frames per second...
+                float fps = (float)count / secs;
+                printf("frame rate: %f\n", fps);
+                count = 0;
+                lastt = xxGetTicks();
+        }
+}
+
+
+
+int main(int argc, char *argv[])
 {
 	init_opengl();
 	init_balls();
@@ -483,9 +587,21 @@ int main(void)
 	clock_gettime(CLOCK_REALTIME, &timePause);
 	clock_gettime(CLOCK_REALTIME, &timeStart);
 
+
+//	int x=0, y=0;
+//	if (argc > 2) {
+//		x = atoi(argv[1]);
+//		y = atoi(argv[2]);
+//	}
+//	if (argc > 3)
+	//	showOpengl = 1;
+
 	//declar game object
 //	Game game;
 //	game.n=0;
+	gettimeofday(&gamestarttv, NULL);
+	
+	//initXWindows(0, 0);
 
 	while (!done) {
 		while (x11.getPending()) {
@@ -504,7 +620,8 @@ int main(void)
 			physicsCountdown -= physicsRate;
 		}
 		render();
-		x11.swapBuffers();
+		x11.swapBuffers();	
+		showFrameRate();
 	}
 	//cleanup_fonts();
 	return 0;
@@ -1632,7 +1749,7 @@ void physics(void)
 		int randomPOS = rand()%6;
 		//debugging
 		//randomPOS = 4;
-		printf("%d = randomPOS\n", randomPOS);
+		//printf("%d = randomPOS\n", randomPOS);
 		ball[i].radius = 40;
 		
 
@@ -2108,6 +2225,23 @@ void render(void)
 				glPopMatrix();
 			}
 	//	}
+
+	        //
+        if (showOpengl) {
+                glClear(GL_COLOR_BUFFER_BIT);
+                float wid = 40.0f;
+                glColor3ub(30,60,90);
+                glPushMatrix();
+                glTranslatef(pos[0], pos[1], pos[2]);
+                glBegin(GL_QUADS);
+                        glVertex2i(-wid,-wid);
+                        glVertex2i(-wid, wid);
+                        glVertex2i( wid, wid);
+                        glVertex2i( wid,-wid);
+                glEnd();
+                glPopMatrix();
+        }
+
 
 
 }
