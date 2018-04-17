@@ -456,6 +456,7 @@ public:
 	Vec pos;
 	Vec vel;
 	Vec force;
+	Vec center;
 	Shape s;
 	float radius;
 	float mass;
@@ -746,6 +747,8 @@ void init_boxes(void)
 	box[0].vel[0] = -1.0;
 	box[0].vel[1] = -1.0;
 	box[0].radius = 30.0;
+	box[0].center[0] = 300;
+	box[0].center[1] = 200;
 	game.nBoxes++;
 
 
@@ -779,6 +782,25 @@ void init_balls(void)
 
 }
 
+void clearBoxes(void)
+{
+	for( int i = 0; i < game.nBoxes; i++) {
+	//	ball[i].pos[0] = 200;
+	//	ball[i].pos[1] = yres-150;
+	//	ball[i].vel[0] = 0.0;
+	//	ball[i].vel[1] = 0.0;
+	//	ball[i].radius = 70.0;
+	//	ball[i].mass = sphereVolume(ball[i].radius);
+		box[i].s.width = 0;
+		box[i].s.height = 0;
+		box[i].s.radius = 0;
+		//game.particle[i].s.radius = 0;
+
+		game.nBoxes--;
+	}
+
+
+}
 
 void clearBullets(void)
 {
@@ -1572,18 +1594,16 @@ void physics(void)
 		}
 
 		if(hit2) {
-		//	ball[i] = ball[game.n-1];
-			box[i].pos[0] = 900;
-			box[i].pos[1] = 700;
-			box[i].vel[0] = 0;
-			box[i].vel[1] = 0;
-			printf("moving box off screen\n");
-			hit2 = false;
-			
-		}
-		
+		//		ball[i] = ball[game.n-1];
+				box[i].pos[0] = 900;
+				box[i].pos[1] = 700;
+				box[i].vel[0] = 0;
+				box[i].vel[1] = 0;
+				printf("moving box off screen\n");
+				hit2 = false;		
+			}
 
-	}
+		}
 	}
 
 
@@ -1683,7 +1703,75 @@ void physics(void)
 		}
 		//check for slow bullets no working
 		
+	
+		//BULLET COLLIONS WITH Box
+		for (int i3=0; i3<game.nBoxes; i3++) {
+
+		//
+		//finds position of particle postion against the balls
+		Flt newx = game.particle[i].s.center[0] - box[i3].pos[0];
+		Flt newy = game.particle[i].s.center[1] - box[i3].pos[1];
+		Flt area = newx * newy;
+		Flt distance = newx * newx;
+		Flt distance2 = newy * newy;
+		//
+		//BULLET HIT BALL
+		//TODO fix bullet collion with box
+		if (distance < box[i3].center[0]) {
+		//	ball[i2].vel[0] = -ball[i2].vel[0];
+			if (distance2 < box[i3].center[1]) {
+			playSound(1);
+
+			//debugging
+			//game.score = 35;
+			//game.level = 3;
+
+			//split hit ball into 2 new balls
+			/*
+			if (ball[i2].split == false && game.level >= 3 && ball[i2].radius == 40){
+				ball[i2].radius = ball[i2].radius/2;
+				//game.n++;
+				ball[game.n].radius = ball[i2].radius;
+				ball[game.n].pos[0] = ball[i2].pos[0] + ball[i2].radius + 10;
+				ball[game.n].pos[1] = ball[i2].pos[1] + ball[i2].radius + 10;
+				ball[game.n].vel[0] = -ball[i2].vel[0];
+				ball[game.n].vel[1] = -ball[i2].vel[1];
+				if (game.n >= 10) {
+					ball[game.n].split = true;
+					ball[i2].split = true;
+				}
+				game.n++;
+				return;
+			} else {
+			*/
+			//make sure particle array is not overflown
+			//spawn a ton of particles!
+			    	killEffect(box[i3].pos[0], box[i3].pos[1]);
+
+			}
+
+			
+			//printf("ball[%i] hit sending off screen \n", i2);
+			//remove ball that was hit
+			game.score = game.score + 1;
+
+			//printf("ball[%i] hit Score = %i \n", i2, game.score);
+			printf("Score: %i \n", game.score);
+
+			box[i3].pos[0] = 900;
+			box[i3].pos[1] = 700;
+			box[i3].vel[0] = 0;
+			box[i3].vel[1] = 0;
 		
+			//remove bullet that was hit with ball
+			game.particle[i] = game.particle[game.nBullets-1];
+			game.nBullets--;
+			}
+		}
+	
+
+
+
 
 
 		//BULLET COLLIONS WITH BALL
@@ -2257,6 +2345,7 @@ void render(void)
 
 		clearBullets();
 		clearBalls();
+		//clearBoxes();
 
 		glColor3ub(255,255,255);
 
