@@ -1720,33 +1720,16 @@ void physics(void)
 		//BULLET HIT BALL
 		//TODO fix bullet collion with box
 		//currently broken only clears box when bullet is to the left of it
-		if (distance < box[i3].pos[0]) {
+		if (area < box[i3].pos[0]) {
 		//	ball[i2].vel[0] = -ball[i2].vel[0];
-			if (distance2 < box[i3].pos[1]) {
+			if (area < box[i3].pos[1]) {
 			playSound(1);
 
 			//debugging
 			//game.score = 35;
 			//game.level = 3;
 
-			//split hit ball into 2 new balls
-			/*
-			if (ball[i2].split == false && game.level >= 3 && ball[i2].radius == 40){
-				ball[i2].radius = ball[i2].radius/2;
-				//game.n++;
-				ball[game.n].radius = ball[i2].radius;
-				ball[game.n].pos[0] = ball[i2].pos[0] + ball[i2].radius + 10;
-				ball[game.n].pos[1] = ball[i2].pos[1] + ball[i2].radius + 10;
-				ball[game.n].vel[0] = -ball[i2].vel[0];
-				ball[game.n].vel[1] = -ball[i2].vel[1];
-				if (game.n >= 10) {
-					ball[game.n].split = true;
-					ball[i2].split = true;
-				}
-				game.n++;
-				return;
-			} else {
-			*/
+			
 			//make sure particle array is not overflown
 			//spawn a ton of particles!
 			    	killEffect(box[i3].pos[0], box[i3].pos[1]);
