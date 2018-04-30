@@ -524,6 +524,7 @@ class Game {
 	int score;
 	int level;
 	float moveSpeed;
+	bool levelUp;
 	
 	//texures
 	GLuint gameOverTexture;
@@ -535,6 +536,7 @@ class Game {
 	unsigned char keys[65535];
 
 	Game(){
+	    	levelUp = false;
 	    	nBoxes = 0;
 		level = 0;
 		score = 0;
@@ -606,7 +608,7 @@ int main(int argc, char *argv[])
 {
 	init_opengl();
 	init_balls();
-	init_boxes();
+	//init_boxes();
 	clock_gettime(CLOCK_REALTIME, &timePause);
 	clock_gettime(CLOCK_REALTIME, &timeStart);
 
@@ -1296,6 +1298,7 @@ void killEffect(int posx, int posy)
 
 void physics(void)
 {
+
 	//debugging statments
 	//printf("nHits = %i\n", game.nHit);
 
@@ -1539,6 +1542,7 @@ void physics(void)
 	}
 
 	//check off screen boxes
+	/*
 	bool hit2 = false;
 	for (int i=0; i<game.nBoxes; i++) {
 		//BALL COLLIONS WITH WALLS
@@ -1605,7 +1609,7 @@ void physics(void)
 
 		}
 	}
-
+	*/
 
 	bool hit = false;
 
@@ -1705,6 +1709,7 @@ void physics(void)
 		
 	
 		//BULLET COLLIONS WITH Box
+		/*
 		for (int i3=0; i3<game.nBoxes; i3++) {
 
 		//
@@ -1755,6 +1760,7 @@ void physics(void)
 			
 			}
 		}
+		*/
 	
 
 
@@ -2257,31 +2263,105 @@ void render(void)
 	
 	    	renderPlayer();
 	 	renderBalls();
-		renderBoxes();
-
-
+	//	renderBoxes();
 
 		//game level 
 		if (game.score == 0) {
 			game.level = 0;
+			//game.n++;
+
+			game.levelUp = false;
 		}
 		if (game.score == 10) {
 			game.level = 1;
+			if (game.levelUp == false) { 
+				ball[game.n].pos[0] = 900;
+				ball[game.n].pos[1] = 700;
+				ball[game.n].vel[0] = 0.0;
+				ball[game.n].vel[1] = 0.0;
+				ball[game.n].radius = 40.0;
+				ball[game.n].mass = sphereVolume(ball[0].radius);
+				ball[game.n].split = false;
+
+				game.n++;
+				game.levelUp = true;
+			}
 		}
 		if (game.score == 20) {
 			game.level = 2;
+			if (game.levelUp == true) {
+				ball[game.n].pos[0] = 900;
+				ball[game.n].pos[1] = 700;
+				ball[game.n].vel[0] = 0.0;
+				ball[game.n].vel[1] = 0.0;
+				ball[game.n].radius = 40.0;
+				ball[game.n].mass = sphereVolume(ball[0].radius);
+				ball[game.n].split = false;
+
+				game.n++;
+				game.levelUp = false;
+			}
+
 		}
 		if (game.score == 25) {
 			game.level = 3;
+			if (game.levelUp == false) {
+				ball[game.n].pos[0] = 900;
+				ball[game.n].pos[1] = 700;
+				ball[game.n].vel[0] = 0.0;
+				ball[game.n].vel[1] = 0.0;
+				ball[game.n].radius = 40.0;
+				ball[game.n].mass = sphereVolume(ball[0].radius);
+				ball[game.n].split = false;
+
+				game.n++;
+				game.levelUp = true;
+			}
 		}
 		if (game.score == 30) {
 			game.level = 4;
+			if (game.levelUp == true) {
+				ball[game.n].pos[0] = 900;
+				ball[game.n].pos[1] = 700;
+				ball[game.n].vel[0] = 0.0;
+				ball[game.n].vel[1] = 0.0;
+				ball[game.n].radius = 40.0;
+				ball[game.n].mass = sphereVolume(ball[0].radius);
+				ball[game.n].split = false;
+
+				game.n++;
+				game.levelUp = false;
+			}
 		}
 		if (game.score == 35) {
 			game.level = 5;
+			if (game.levelUp == false ) {
+				ball[game.n].pos[0] = 900;
+				ball[game.n].pos[1] = 700;
+				ball[game.n].vel[0] = 0.0;
+				ball[game.n].vel[1] = 0.0;
+				ball[game.n].radius = 40.0;
+				ball[game.n].mass = sphereVolume(ball[0].radius);
+				ball[game.n].split = false;
+
+				game.n++;
+				game.levelUp = true;
+			}
 		}
 		if (game.score == 45) {
 			game.level = 6;
+			if (game.levelUp == true ) {
+				ball[game.n].pos[0] = 900;
+				ball[game.n].pos[1] = 700;
+				ball[game.n].vel[0] = 0.0;
+				ball[game.n].vel[1] = 0.0;
+				ball[game.n].radius = 40.0;
+				ball[game.n].mass = sphereVolume(ball[0].radius);
+				ball[game.n].split = false;
+
+				game.n++;
+				game.levelUp = false;
+			}
 		}
 	
 		//render particles
