@@ -98,6 +98,7 @@ struct Particle {
 	Shape s;
 	Vec velocity;
 	int count;
+	bool thrust;
 };
 
 
@@ -1117,6 +1118,14 @@ void moveLeft()
 { 
 	if(game.player.vel[0] > -2 && game.player.vel[0] < 2) {
 		game.player.vel[0] -= game.moveSpeed;
+
+	   //Spawn Thrust particle 6
+	   game.hitPart[game.nHit].s.center[0] = game.player.pos[0];
+	   game.hitPart[game.nHit].s.center[1] = game.player.pos[1];
+           game.hitPart[game.nHit].velocity[0] = 5;
+	   game.hitPart[game.nHit].velocity[1] = 0;
+	   game.hitPart[game.nHit].thrust = true;
+	   game.nHit++;
 	}
     //game.player.pos[0] -= game.moveSpeed;
     game.player.angle = 270;
@@ -1127,6 +1136,14 @@ void moveRight()
 
 	if(game.player.vel[0] > -2 && game.player.vel[0] < 2) {
 		game.player.vel[0] += game.moveSpeed;
+
+	   //Spawn Thrust particle 6
+	   game.hitPart[game.nHit].s.center[0] = game.player.pos[0];
+	   game.hitPart[game.nHit].s.center[1] = game.player.pos[1];
+           game.hitPart[game.nHit].velocity[0] = -5;
+	   game.hitPart[game.nHit].velocity[1] = 0;
+	   game.hitPart[game.nHit].thrust = true;
+	   game.nHit++;
 	}
     //game.player.pos[0] += game.moveSpeed;
     game.player.angle = 90; 
@@ -1137,9 +1154,18 @@ void moveUp()
 
 	if(game.player.vel[1] > -2 && game.player.vel[1] < 2) {
     		game.player.vel[1] += game.moveSpeed;
+
+	   //Spawn Thrust particle 6
+	   game.hitPart[game.nHit].s.center[0] = game.player.pos[0];
+	   game.hitPart[game.nHit].s.center[1] = game.player.pos[1];
+           game.hitPart[game.nHit].velocity[0] = 0;
+	   game.hitPart[game.nHit].velocity[1] = -5;
+	   game.hitPart[game.nHit].thrust = true;
+	   game.nHit++;
 	} 
     //game.player.pos[1] += game.moveSpeed;
     game.player.angle = 360;
+
 
 }
 
@@ -1147,9 +1173,19 @@ void moveDown()
 { 
 	if(game.player.vel[1] > -2 && game.player.vel[1] < 2) {
   	  game.player.vel[1] -= game.moveSpeed;
+
+	   //Spawn Thrust particle 6
+	   game.hitPart[game.nHit].s.center[0] = game.player.pos[0];
+	   game.hitPart[game.nHit].s.center[1] = game.player.pos[1];
+           game.hitPart[game.nHit].velocity[0] = 0;
+	   game.hitPart[game.nHit].velocity[1] = 5;
+	   game.hitPart[game.nHit].thrust = true;
+	   game.nHit++;
+
 	}
     //game.player.pos[1] -= game.moveSpeed;
     game.player.angle = 180;
+
 
 }
 
@@ -2289,6 +2325,8 @@ void render(void)
 		glEnd();
 		//be sure to use glBindTeture with 0 to unbind the texture to draw more	
 		glBindTexture(GL_TEXTURE_2D, 0);
+		
+		glPopMatrix();
 
 
 	    	renderPlayer();
@@ -2489,9 +2527,24 @@ void render(void)
 		    float h, w;
 			for (int i = 0; i < game.nHit; i++) {
 				glPushMatrix();
+			
+			/*	
+				if (game.hitPart[i].thrust == true) {
+					glColor3ub(255,129,79);
+
+				} else {
+					glColor3ub(255,255,255);
+				}
+			*/	
+				
 				glColor3ub(255,255,255);
-				w = 2;
-				h = 2;
+				if (game.hitPart[i].thrust == true) {
+					w = 1;
+					h = 1;
+				} else {
+					w = 2;
+					h = 2;
+				}
 				glBegin(GL_QUADS);
 				glVertex2i(game.hitPart[i].s.center[0]-w, game.hitPart[i].s.center[1]-h);
 				glVertex2i(game.hitPart[i].s.center[0]-w, game.hitPart[i].s.center[1]+h);
