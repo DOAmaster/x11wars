@@ -2528,16 +2528,14 @@ void render(void)
 			for (int i = 0; i < game.nHit; i++) {
 				glPushMatrix();
 			
-			/*	
+				
 				if (game.hitPart[i].thrust == true) {
 					glColor3ub(255,129,79);
 
 				} else {
 					glColor3ub(255,255,255);
 				}
-			*/	
-				
-				glColor3ub(255,255,255);
+					
 				if (game.hitPart[i].thrust == true) {
 					w = 1;
 					h = 1;
@@ -2552,6 +2550,8 @@ void render(void)
 				glVertex2i(game.hitPart[i].s.center[0]+w, game.hitPart[i].s.center[1]-h);
 				glEnd();
 				glPopMatrix();
+
+				glColor3ub(255,255,255);
 			}
 	//	}
 
