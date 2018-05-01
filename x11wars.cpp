@@ -311,10 +311,11 @@ public:
 			unlink(ppmname);
 	}
 };
-Image img[3] = {
+Image img[4] = {
 "./title.jpg",
 "./gameover.jpg",
-"./titletrans.gif"
+"./titletrans.gif",
+"./background.gif"
 };
 
 //alpha color yellow (255, 255, 100)
@@ -530,6 +531,7 @@ class Game {
 	GLuint gameOverTexture;
 	GLuint titleTexture;
 	GLuint titleTextureTrans;
+	GLuint backgroundTexture;
 
 	State state;
 	bool spawner;
@@ -596,7 +598,7 @@ void showFrameRate()
                 float secs = (float)diff / 1000.0;
                 //frames per second...
                 float fps = (float)count / secs;
-                printf("frame rate: %f\n", fps);
+                //printf("frame rate: %f\n", fps);
                 count = 0;
                 lastt = xxGetTicks();
         }
@@ -691,6 +693,7 @@ void init_opengl(void)
 	glGenTextures(1, &game.titleTexture);	
 	glGenTextures(1, &game.gameOverTexture);
 	glGenTextures(1, &game.titleTextureTrans);
+	glGenTextures(1, &game.backgroundTexture);
 
 	//title image
 	glBindTexture(GL_TEXTURE_2D, game.titleTexture);
@@ -712,6 +715,14 @@ void init_opengl(void)
 		0, GL_RGB, GL_UNSIGNED_BYTE, img[1].data);
 
 
+	//background image
+	glBindTexture(GL_TEXTURE_2D, game.backgroundTexture);
+	//
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 3,
+		img[3].width, img[3].height,
+		0, GL_RGB, GL_UNSIGNED_BYTE, img[3].data);
 
 	//title image transparent
 	//
@@ -2260,7 +2271,26 @@ void render(void)
 	//
 	if(game.state == STATE_GAMEPLAY) {
 			    
-	
+
+
+
+		//show background space texture
+		glEnable(GL_BLEND);
+
+		glBindTexture(GL_TEXTURE_2D, game.backgroundTexture);
+                glEnable(GL_ALPHA_TEST);
+                glAlphaFunc(GL_GREATER, 0.0f);
+
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0f, 1.0f); glVertex2i(0, 0);
+			glTexCoord2f(0.0f, 0.0f); glVertex2i(0, yres);
+			glTexCoord2f(1.0f, 0.0f); glVertex2i(xres, yres);
+			glTexCoord2f(1.0f, 1.0f); glVertex2i(xres, 0);
+		glEnd();
+		//be sure to use glBindTeture with 0 to unbind the texture to draw more	
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+
 	    	renderPlayer();
 	 	renderBalls();
 	//	renderBoxes();
